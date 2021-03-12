@@ -54,7 +54,7 @@ if %exitres%==T exit
 choco uninstall -y geany
 
 :: UNINSTALL gnuplot
-choco uninstall -y gnupplot
+choco uninstall -y gnuplot
 
 :: UNINSTALL CYG-GET
 choco uninstall -y cyg-get
