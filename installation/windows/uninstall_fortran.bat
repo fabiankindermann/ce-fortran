@@ -3,7 +3,10 @@
 :: This code is published under the GNU General Public License v3
 ::                         (https://www.gnu.org/licenses/gpl-3.0.en.html)
 ::
-:: Author: Fabian Kindermann (contact@ce-fortran.com)
+:: Authors: Hans Fehr and Fabian Kindermann
+::          contact@ce-fortran.com
+::
+:: #VC# VERSION: 1.5  (06 January 2021)
 
 @ECHO off
 chcp 1252
@@ -34,10 +37,11 @@ exit /B
 @cd /d "%~dp0"
 
 
+
 :: ASK FOR UNINSTALLATION PROCESS
 
 ECHO.
-ECHO This script completely uninstalls Chocolatey/Fortran/GNU Plot/Geany from your system location:
+ECHO This script completely uninstalls CYGWIN/GNU Plot/Geany from your system location:
 ECHO.
 ECHO    %location%
 ECHO.
@@ -50,22 +54,21 @@ if %temp:~-0,1%==Y set exitres=F
 if %exitres%==T exit
 
 
-:: UNINSTALL GEANY
-choco uninstall -y geany
 
-:: UNINSTALL gnuplot
-choco uninstall -y gnuplot
+:: UNINSTALL CYGWIN COMPLETELY
+rmdir /s /q "%location%"
 
-:: UNINSTALL CYG-GET
-choco uninstall -y cyg-get
 
-:: UNINSTALL CYGWIN
-choco uninstall -y cygwin
 
-:: UNINSTALL CHOCOLATEY
-rmdir /S /Q %ChocolateyInstall%
+:: ERASE CYGWIN REGISTRY ENTRIES
 
-:: UPDATE REGISTRY
+:: backup current registry key
+reg DELETE "HKEY_LOCAL_MACHINE\SOFTWARE\Cygwin" /f
+reg DELETE "HKEY_CURRENT_USER\SOFTWARE\Cygwin" /f
+
+
+
+:: UPDATE PATH VARIABLE
 
 :: backup current registry key
 reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v Path_backup /t REG_EXPAND_SZ /d "%PATH%" /f
@@ -85,25 +88,33 @@ if errorlevel 0 (
     set "PATH=!PATH:%unwanted%=!"
 )
 
-
-set "unwanted=;%ChocolateyInstall%\bin"
-ECHO.%PATH% | findstr /C:"%ChocolateyInstall%\bin" 1>nul
-if errorlevel 0 (
-    set "PATH=!PATH:%unwanted%=!"
-)
-
 reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v Path /t REG_EXPAND_SZ /d "%PATH%" /f
 reg query "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment"
 
 EndLocal
 
-reg delete "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v ChocolateyInstall /f
+
+
+:: UNINSTALL GNUPLOT
+
+"%ProgramFiles%\gnuplot\unins000.exe" /SILENT
+
+
+
+:: UNINSTALL GEANY
+
+"%ProgramFiles(x86)%\Geany\uninst.exe" /S
+
+
+
+:: REMOVE ALL GEANY TRACES
+
+rmdir /s /q "%userprofile%\AppData\Roaming\geany\" 2>nul
+
 
 
 :: IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE UNINSTALLED PROPERLY
 
-ECHO. 
-ECHO. 
 ECHO. 
 ECHO ...UNINSTALLATION PROCESS COMPLETED.
 ECHO.

@@ -35,6 +35,8 @@ exit /B
 @setlocal enableextensions
 @cd /d "%~dp0"
 
+
+
 :: ASK FOR INSTALLATION DIRECTORY CHANGES
 ECHO.
 ECHO This script installs our toolbox into the directory: 
@@ -71,6 +73,8 @@ move "toolbox.o" "%location%\include%\"
 move "toolbox_debug.o" "%location%\include%\"
 ECHO ...DONE...
 ECHO.
+
+
 
 :: IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE INSTALLED PROPERLY
 :theend

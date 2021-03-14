@@ -12,6 +12,7 @@ chcp 1252
 SET "location=C:\cygwin"
 
 
+
 :: GET INTO ADMINSTRATOR MODE
 
 :checkPrivileges 
@@ -33,7 +34,10 @@ exit /B
 @setlocal enableextensions
 @cd /d "%~dp0"
 
+
+
 :: ASK FOR INSTALLATION DIRECTORY CHANGES
+
 ECHO.
 ECHO This script installs Fortran and its development components into the directory: 
 ECHO.
@@ -50,12 +54,25 @@ if %temp:~-0,1%==Y set exitres=F
 if %exitres%==T exit
 
 
-:: DOWNLOAD THE CYGWIN INSTALLATION FILE
-@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "$WebClient = New-Object System.Net.WebClient; $WebClient.DownloadFile('http://cygwin.com/setup-x86_64.exe','cygwin.exe')"
+
+:: GENERATE DOWNLOAD FOLDER FOR EVERYTHING THAT NEED TO BE DOWNLOADED
+
+mkdir downloads
+@cd /d downloads
+
 
 
 :: INSTALL CYGWIN
-cygwin.exe -q -s http://ftp.fau.de/cygwin --no-shortcuts --root "%location%" --packages gcc-core,gcc-fortran,gccmakedep,colorgcc,gdb,make,git,wget
+
+:: download the cygwin installation file
+@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "$WebClient = New-Object System.Net.WebClient; $WebClient.DownloadFile('http://cygwin.com/setup-x86_64.exe','cygwin.exe')"
+
+:: use cygwin installer
+cygwin.exe -q -s http://ftp.fau.de/cygwin --no-shortcuts --root "%location%" --packages bash,gcc-core,gcc-fortran,gccmakedep,colorgcc,gdb,make,git,wget
+
+:: move the cygwin.exe file to the cygwin directory for later use
+move "cygwin.exe" "%location%\bin"
+
 
 
 :: UPDATE PATH VARIABLE
@@ -64,9 +81,7 @@ cygwin.exe -q -s http://ftp.fau.de/cygwin --no-shortcuts --root "%location%" --p
 reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v Path_backup /t REG_EXPAND_SZ /d "%PATH%" /f
 
 :: update path variable (if necessary)
-
 ECHO.%PATH% | findstr /C:"%location%\bin" 1>nul
-
 if errorlevel 1 (
     set "PATH=%PATH%;%location%\bin"
 )
@@ -76,16 +91,47 @@ if errorlevel 1 (
     set "PATH=%PATH%;%location%\usr\bin"
 )
 
+:: add path to environment variables
 reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v Path /t REG_EXPAND_SZ /d "%PATH%" /f
 
+
+
 :: INSTALL GNUPLOT
-choco install -y gnuplot
+
+:: write the setup log
+ECHO [Setup] > "gnusetup.log"
+ECHO Lang=en >> "gnusetup.log"
+ECHO Group=gnuplot >> "gnusetup.log"
+ECHO NoIcons=0 >> "gnusetup.log"
+ECHO SetupType=full >> "gnusetup.log"
+ECHO Components=core,docs,demo,license >> "gnusetup.log"
+ECHO Tasks=defaulttermwxt,associate,associate\plt,associate\gp,associate\gpl,modifypath >> "gnusetup.log"
+
+:: download the installer file
+wget -O gnuplotins.exe https://sourceforge.net/projects/gnuplot/files/gnuplot/5.4.1/gp541-win64-mingw.exe
+
+:: give execution rights
+chmod +x gnuplotins.exe
+
+:: run installer with configuration
+gnuplotins.exe /SILENT /LOADINF="gnusetup.log"
+
+
 
 :: INSTALL GEANY
-choco install -y geany
+
+:: download file
+wget -O geanyins.exe https://download.geany.org/geany-1.37.1_setup.exe
+
+:: give execution rights
+chmod +x geanyins.exe
+
+:: run installer silently
+geanyins.exe /S
 
 
-:: CREATE PATH FILES FOR GEANY
+
+:: PATH GEANY FOR USE WITH FORTRAN
 
 :: Fortran compilation file
 set locnew=%location:\=\\%
@@ -111,29 +157,18 @@ ECHO [geany] >  "geany.conf"
 ECHO indent_type=0 >>  "geany.conf"
 ECHO pref_main_load_session=false >>  "geany.conf"
 ECHO beep_on_errors=false >>  "geany.conf"
-ECHO editor_font=Menlo Medium 14 >>  "geany.conf"
 
-
-:: THIS IS TO UPDATE THE GEANY COMPILING AND BUILDING OPTIONS TO OUR PREFERRED CONFIGURATION
-
-ECHO.
-ECHO ...PATCHING GEANY...
+:: update geany configuration
 mkdir "%userprofile%\AppData\Roaming\geany\filedefs\" 2>nul
 move filetypes.fortran "%userprofile%\AppData\Roaming\geany\filedefs\filetypes.fortran"
 move geany.conf "%userprofile%\AppData\Roaming\geany\geany.conf"
-ECHO ...DONE...
-ECHO.
 
 
-:: THIS IS TO INSTALL THE TOOLBOX
 
-ECHO.
-ECHO ...COMPILING TOOLBOX...
-gfortran -c -Wno-unused -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../toolbox/toolbox.f90 -o toolbox_debug.o
-gfortran -c -O3 ./../toolbox/toolbox.f90 -o toolbox.o
-ECHO ...DONE...
-ECHO.
-ECHO ...COPYING TO INCLUDE DIRECTORY...
+:: INSTALL THE TOOLBOX
+
+gfortran -c -Wno-unused -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../../toolbox/toolbox.f90 -o toolbox_debug.o
+gfortran -c -O3 ./../../toolbox/toolbox.f90 -o toolbox.o
 mkdir "%location%\include\" 2>nul
 del /Q "%location%\include\toolbox.mod" 2>nul
 del /Q "%location%\include\toolbox.o" 2>nul
@@ -141,8 +176,7 @@ del /Q "%location%\include\toolbox_debug.o" 2>nul
 move "toolbox.mod" "%location%\include\"
 move "toolbox.o" "%location%\include%\"
 move "toolbox_debug.o" "%location%\include%\"
-ECHO ...DONE...
-ECHO.
+
 
 
 :: ASK FOR FILE ASSOCIATION
@@ -166,12 +200,15 @@ ASSOC .f03=Geany.ProjectFile
 ASSOC .f08=Geany.ProjectFile
 
 
+
 :: IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE INSTALLED PROPERLY
 :theend
 ECHO. 
 ECHO. 
 ECHO. 
 ECHO ...INSTALLATION COMPLETED.
+ECHO.
+ECHO YOU SHOULD RESTART YOUR SYSTEM TO FULLY ENJOY THE FORTRAN DEVELOPMENT ENVIRONMENT.
 ECHO.
 ECHO.
 ECHO In case you encountered any problem, check on www.ce-fortran.com for help.
