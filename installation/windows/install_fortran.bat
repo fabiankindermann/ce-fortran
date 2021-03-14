@@ -35,7 +35,7 @@ exit /B
 
 :: ASK FOR INSTALLATION DIRECTORY CHANGES
 ECHO.
-ECHO This script uses Chocolatey to install Fortran and its development components into the directory: 
+ECHO This script installs Fortran and its development components into the directory: 
 ECHO.
 ECHO    %location%
 ECHO.
@@ -50,12 +50,12 @@ if %temp:~-0,1%==Y set exitres=F
 if %exitres%==T exit
 
 
-:: INSTALL CHOCOLATEY USING POWER SHELL
-@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "[System.Net.ServicePointManager]::SecurityProtocol = 3072; iex ((New-Object System.Net.WebClient).DownloadString('https://chocolatey.org/install.ps1'))" && SET "PATH=%PATH%;%ALLUSERSPROFILE%\chocolatey\bin"
+:: DOWNLOAD THE CYGWIN INSTALLATION FILE
+@"%SystemRoot%\System32\WindowsPowerShell\v1.0\powershell.exe" -NoProfile -InputFormat None -ExecutionPolicy Bypass -Command "$WebClient = New-Object System.Net.WebClient; $WebClient.DownloadFile('http://cygwin.com/setup-x86_64.exe','cygwin.exe')"
 
 
 :: INSTALL CYGWIN
-choco install -y cygwin --params "/InstallDir:%location% /Site:http://ftp.fau.de/cygwin"
+cygwin.exe -q -s http://ftp.fau.de/cygwin --no-shortcuts --root "%location%" --packages gcc-core,gcc-fortran,gccmakedep,colorgcc,gdb,make,git,wget
 
 
 :: UPDATE PATH VARIABLE
@@ -77,13 +77,6 @@ if errorlevel 1 (
 )
 
 reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v Path /t REG_EXPAND_SZ /d "%PATH%" /f
-
-
-:: INSTALL CYG-GET FOR ADDITIONAL PACKAGES
-choco install -y cyg-get
-
-:: GET ADDITIONAL CYGWIN PACKAGES
-call cyg-get gcc-core gcc-fortran gccmakedep colorgcc gdb make git
 
 :: INSTALL GNUPLOT
 choco install -y gnuplot
