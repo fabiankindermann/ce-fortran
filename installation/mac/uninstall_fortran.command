@@ -42,6 +42,7 @@ sudo rm -f /usr/local/include/toolbox_version.command
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh)"
 
 
+
 # REMOVE GEANY APPLICATION
 
 rm -rf /Applications/Geany.app/

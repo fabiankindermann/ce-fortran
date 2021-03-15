@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-# A SHELL SCRIPT FOR INSTALLING FORTRAN ON MACOS
+# A SHELL SCRIPT FOR INSTALLING FORTRAN ON UBUNTU
 #
 # This code is published under the GNU General Public License v3
 #                         (https://www.gnu.org/licenses/gpl-3.0.en.html)
@@ -12,6 +12,10 @@
 # set the current directory as running directory
 cd "$( cd "$( dirname "$0" )" && pwd )"
 
+
+# CHECK WHETHER THE SCRIPT HAS ROOT PRIVILIGES
+
+[ "$UID" -eq 0 ] || { echo ; echo "THIS SCRIPT NEEDS TO BE RUN WITH ROOT PRIVILEGES!!!" ; echo ; echo "If you don't want this, use our docker images." ; echo ; echo "PLEASE TYPE YOUR PASSWORD:"; exec sudo "$0" "$@";}
 
 
 # ASK FOR INSTALLATION CONFIRMATION
@@ -28,27 +32,34 @@ fi
 
 
 
-# INSTALL HOMEBREW WHICH WILL GOVERN THE INSTALLATION OF EVERTHING ELSE
+# INSTALL BUILD ESSENTIAL TOOLS IF NOT YET DONE
 
-/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+apt-get update
+apt-get --yes install build-essential
 
 
 
 # INSTALL GNU GFORTRAN COMPILER
 
-brew install gcc
+apt-get --yes install gfortran
+
+
+
+# INSTALL GNU DEBUGGER
+
+apt-get --yes install gdb
 
 
 
 # INSTALL GNUPLOT
 
-brew install gnuplot
+apt-get --yes install gnuplot gnuplot-x11
 
 
 
 # INSTALL GEANY TEXT EDITOR
 
-brew install --cask geany
+sudo apt-get --yes install geany
 
 
 
@@ -69,7 +80,7 @@ echo 'EX_00_LB=_Run Program' >> "filetypes.fortran"
 echo 'EX_00_CM=clear && "Build/prog"' >> "filetypes.fortran"
 echo 'EX_00_WD=' >> "filetypes.fortran"
 echo 'EX_01_LB=_Run Debugger'>> "filetypes.fortran"
-echo 'EX_01_CM=clear && lldb "Build/%e.o"' >> "filetypes.fortran"
+echo 'EX_01_CM=clear && gdb "Build/%e.o"' >> "filetypes.fortran"
 echo 'EX_01_WD=' >> "filetypes.fortran"
 
 # geany editor behavior
@@ -80,8 +91,17 @@ echo 'beep_on_errors=false' >>  "geany.conf"
 
 # update geany configuration
 mkdir -p ~/.config/geany/filedefs/
-sudo mv ./filetypes.fortran ~/.config/geany/filedefs/filetypes.fortran
-sudo mv ./geany.conf ~/.config/geany/geany.conf
+cp ./src/filetypes.fortran ~/.config/geany/filedefs/filetypes.fortran
+cp ./src/geany.conf ~/.config/geany/geany.conf
+chmod 664 ~/.config/geany/filedefs/filetypes.fortran
+chown $USER:$USER -c ~/.config/geany/filedefs/filetypes.fortran
+chmod 664 ~/.config/geany/geany.conf
+chown $USER:$USER -c ~/.config/geany/geany.conf
+
+# geany desktop icon
+cp /usr/share/applications/geany.desktop ~/Desktop
+chmod +x ~/Desktop/geany.desktop
+chown $USER:$USER -c ~/Desktop/geany.desktop
 
 
 ## INSTALL THE TOOLBOX
@@ -91,10 +111,10 @@ gfortran -c -Werror -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -f
 gfortran -c -O3 -ffree-line-length-none ./../toolbox/toolbox.f90 -o toolbox.o
 
 # copy the toolbox to the working directory
-sudo mkdir -p /usr/local/include
-sudo mv toolbox.mod /usr/local/include/
-sudo mv toolbox.o /usr/local/include/
-sudo mv toolbox_debug.o /usr/local/include/
+mkdir -p /usr/local/include
+mv toolbox.mod /usr/local/include/
+mv toolbox.o /usr/local/include/
+mv toolbox_debug.o /usr/local/include/
 
 
 
@@ -107,4 +127,4 @@ echo
 echo In case you encountered any problem, check on www.ce-fortran.com for help.
 echo
 echo
-read -rsp $'Press RETURN to end...\n' -n 1 key
+read -p "Press RETURN to end..."

@@ -1,7 +1,7 @@
 #!/bin/bash
 
 
-# A SHELL SCRIPT FOR UPDATING THE TOOLBOX ON MACOS
+# A SHELL SCRIPT FOR UPDATING THE TOOLBOX ON UBUNTU
 #
 # ATTENTION: Fortran must already be installed using our original installation files.
 #
@@ -14,6 +14,10 @@
 # set the current directory as running directory
 cd "$( cd "$( dirname "$0" )" && pwd )"
 
+
+# CHECK WHETHER THE SCRIPT HAS ROOT PRIVILIGES
+
+[ "$UID" -eq 0 ] || { echo ; echo "THIS SCRIPT NEEDS TO BE RUN WITH ROOT PRIVILEGES!!!" ; echo ; echo "If you don't want this, use our docker images." ; echo ; echo "PLEASE TYPE YOUR PASSWORD:"; exec sudo "$0" "$@";}
 
 
 # ASK FOR INSTALLATION CONFIRMATION
@@ -39,10 +43,10 @@ gfortran -c -Werror -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -f
 gfortran -c -O3 -ffree-line-length-none ./../toolbox/toolbox.f90 -o toolbox.o
 
 # copy the toolbox to the working directory
-sudo mkdir -p /usr/local/include
-sudo mv toolbox.mod /usr/local/include/
-sudo mv toolbox.o /usr/local/include/
-sudo mv toolbox_debug.o /usr/local/include/
+mkdir -p /usr/local/include
+mv toolbox.mod /usr/local/include/
+mv toolbox.o /usr/local/include/
+mv toolbox_debug.o /usr/local/include/
 
 
 
@@ -55,4 +59,4 @@ echo
 echo In case you encountered any problem, check on www.ce-fortran.com for help.
 echo
 echo
-read -rsp $'Press RETURN to end...\n' -n 1 key
+read -p "Press RETURN to end..."
