@@ -95,7 +95,6 @@ sudo mkdir -p /usr/local/include
 sudo mv toolbox.mod /usr/local/include/
 sudo mv toolbox.o /usr/local/include/
 sudo mv toolbox_debug.o /usr/local/include/
-sudo cp ./src/toolbox_version.command /usr/local/include/
 
 
 
