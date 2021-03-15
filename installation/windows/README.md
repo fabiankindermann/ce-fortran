@@ -4,7 +4,7 @@ The Windows installation package provides three batch files that serve different
 
 1. An installation file `install_fortran.bat` to install Fortran on your Windows computer.
 2. A file `uninstall_fortran.bat` that completely removes the Fortran installation from your computer.
-3. A file `update_toolbox.bat` that fill compile and copy the latest version of our toolbox to your system.
+3. A file `update_toolbox.bat` that compiles and copies the latest version of our toolbox to your system.
 
 All installation files have been tested with Windows 10, but should work down to Windows 7, as long as Power Shell is available.
 
@@ -12,7 +12,7 @@ All installation files have been tested with Windows 10, but should work down to
 
 ## Installation
 
-When you execute the file `install_fortran.bat`, it will install the [GNU Fortran Compiler](https://gcc.gnu.org/fortran/) environment, the plotting programm [cywin](https://www.cygwin.com) as well as the IDE [geany](https://www.geany.org/) to your computer. In addition, it is going to compile and store the toolbox on your computer.
+When you execute the file `install_fortran.bat`, it will install the [GNU Fortran Compiler](https://gcc.gnu.org/fortran/) environment, the plotting programm [gnuplot](http://gnuplot.info/) as well as the IDE [geany](https://www.geany.org/) to your computer. In addition, it is going to compile and store the toolbox on your computer.
 
 
 #### The installation process in detail
@@ -21,9 +21,9 @@ The file `install_fortran.bat` is a so-called batch-file, which we use to execut
 
 Now the installation process has started. In detail you will see the following things happening:
 
-1. The first installer window copies all [GNU Fortran Compiler](https://gcc.gnu.org/fortran/) components to your system using [cywin](https://www.cygwin.com).
-2. Next, an installer opens to install [gnuplot](http://gnuplot.info/).
-3. The third and last installer window will bring the IDE [geany](https://www.geany.org/) to your system.
+1. The first part of the installer copies [GNU Fortran Compiler](https://gcc.gnu.org/fortran/) components to your system using [cywin](https://www.cygwin.com).
+2. Next, we install [gnuplot](http://gnuplot.info/).
+3. The third installer component will bring the IDE [geany](https://www.geany.org/) to your system.
 
 When the three software components are installed, the installation batch-file will do a couple more things:
 
@@ -54,7 +54,7 @@ We strongly recommend that you use the standard installation directory, which is
 
 ## Uninstallation
 
-In the unlikely event that you want to install all the software components as well as the toolbox from your system, you can use the file `uninstall_fortran.bat`. It follows the same logic as the installation batch file. You just have to follow the instructions. Don’t forget to change the location of your Fortran installation, if you have changed the installation directory according to bullet point 3.
+In the unlikely event that you want to uninstall all the software components as well as the toolbox from your system, you can use the file `uninstall_fortran.bat`. It follows the same logic as the installation batch file. You just have to follow the instructions. Don’t forget to change the location of your Fortran installation, if you have changed the installation directory according to bullet point 3.
 
 
 ## Toolbox Update
