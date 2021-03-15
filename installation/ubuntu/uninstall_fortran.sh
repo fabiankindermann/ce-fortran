@@ -14,15 +14,13 @@ cd "$( cd "$( dirname "$0" )" && pwd )"
 
 
 
-# CHECK WHETHER THE SCRIPT HAS ROOT PRIVILIGES
-
-[ "$UID" -eq 0 ] || { echo ; echo "THIS SCRIPT NEEDS TO BE RUN WITH ROOT PRIVILEGES!!!" ; echo ; echo "PLEASE TYPE YOUR PASSWORD:"; exec sudo "$0" "$@";}
-
-
 
 # ASK FOR UNINSTALLATION CONFIRMATION
 echo
-echo This script uninstalls Fortran/GNU Plot/Geany from your system.
+echo "This script uninstalls Fortran/GNU Plot/Geany from your system."
+echo
+echo "THIS SCRIPT NEEDS ROOT PRIVILEGES FOR MANY UNINSTALLATION STEPS!!!"
+echo "PLEASE USE WITH CAUTION!"
 echo 
 read -rsp $'Do you want to continue (y/n)?' -n 1 key
 echo
@@ -35,17 +33,17 @@ fi
 
 # REMOVE THE TOOLBOX
 
-rm -f /usr/local/include/toolbox.mod
-rm -f /usr/local/include/toolbox.o
-rm -f /usr/local/include/toolbox_debug.o
-rm -f /usr/local/include/toolbox_version.sh
+sudo rm -f /usr/local/include/toolbox.mod
+sudo rm -f /usr/local/include/toolbox.o
+sudo rm -f /usr/local/include/toolbox_debug.o
+sudo rm -f /usr/local/include/toolbox_version.sh
 
 
 # UNINSTALL GEANY
 
 # uninstall software
-apt-get --yes remove geany
-rm -r ~/.config/geany
+sudo apt-get --yes remove geany
+sudo rm -r ~/.config/geany
 
 # remove desktop icon
 sudo rm -f ~/Desktop/geany.desktop
@@ -54,25 +52,25 @@ sudo rm -f ~/Desktop/geany.desktop
 
 # UNINSTALL GNUPLOT
 
-apt-get --yes remove gnuplot gnuplot-x11
+sudo apt-get --yes remove gnuplot gnuplot-x11
 
 
 
 # UNINSTALL GNU FORTRAN COMPILER
 
-apt-get --yes remove gfortran
+sudo apt-get --yes remove gfortran
 
 
 
 # DELETE DEPENDENCIES
 
-apt-get --yes autoremove
+sudo apt-get --yes autoremove
 
 
 
 # CLEAN UP CONFIGURATIONS
 
-sudo apt-get --yes clean
+sudo sudo apt-get --yes clean
 
 
 

@@ -13,15 +13,15 @@
 cd "$( cd "$( dirname "$0" )" && pwd )"
 
 
-# CHECK WHETHER THE SCRIPT HAS ROOT PRIVILIGES
-
-[ "$UID" -eq 0 ] || { echo ; echo "THIS SCRIPT NEEDS TO BE RUN WITH ROOT PRIVILEGES!!!" ; echo ; echo "If you don't want this, use our docker images." ; echo ; echo "PLEASE TYPE YOUR PASSWORD:"; exec sudo "$0" "$@";}
-
 
 # ASK FOR INSTALLATION CONFIRMATION
 
 echo
-echo This script installs Fortran to your system.
+echo "This script installs Fortran to your system."
+echo
+echo "THIS SCRIPT NEEDS ROOT PRIVILEGES FOR MANY INSTALLATION STEPS!!!"
+echo 
+echo "If you don't want this, use our docker images." 
 echo 
 read -rsp $'Do you want to continue (y/n)?' -n 1 key
 echo
@@ -34,26 +34,26 @@ fi
 
 # INSTALL BUILD ESSENTIAL TOOLS IF NOT YET DONE
 
-apt-get update
-apt-get --yes install build-essential
+sudo apt-get update
+sudo apt-get --yes install build-essential
 
 
 
 # INSTALL GNU GFORTRAN COMPILER
 
-apt-get --yes install gfortran
+sudo apt-get --yes install gfortran
 
 
 
 # INSTALL GNU DEBUGGER
 
-apt-get --yes install gdb
+sudo apt-get --yes install gdb
 
 
 
 # INSTALL GNUPLOT
 
-apt-get --yes install gnuplot gnuplot-x11
+sudo apt-get --yes install gnuplot gnuplot-x11
 
 
 
@@ -93,15 +93,15 @@ echo 'beep_on_errors=false' >>  "geany.conf"
 mkdir -p ~/.config/geany/filedefs/
 cp ./src/filetypes.fortran ~/.config/geany/filedefs/filetypes.fortran
 cp ./src/geany.conf ~/.config/geany/geany.conf
-chmod 664 ~/.config/geany/filedefs/filetypes.fortran
-chown $USER:$USER -c ~/.config/geany/filedefs/filetypes.fortran
-chmod 664 ~/.config/geany/geany.conf
-chown $USER:$USER -c ~/.config/geany/geany.conf
+sudo chmod 664 ~/.config/geany/filedefs/filetypes.fortran
+sudo chown $USER:$USER -c ~/.config/geany/filedefs/filetypes.fortran
+sudo chmod 664 ~/.config/geany/geany.conf
+sudo chown $USER:$USER -c ~/.config/geany/geany.conf
 
 # geany desktop icon
 cp /usr/share/applications/geany.desktop ~/Desktop
-chmod +x ~/Desktop/geany.desktop
-chown $USER:$USER -c ~/Desktop/geany.desktop
+sudo chmod +x ~/Desktop/geany.desktop
+sudo chown $USER:$USER -c ~/Desktop/geany.desktop
 
 
 ## INSTALL THE TOOLBOX
@@ -111,10 +111,10 @@ gfortran -c -Werror -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -f
 gfortran -c -O3 -ffree-line-length-none ./../toolbox/toolbox.f90 -o toolbox.o
 
 # copy the toolbox to the working directory
-mkdir -p /usr/local/include
-mv toolbox.mod /usr/local/include/
-mv toolbox.o /usr/local/include/
-mv toolbox_debug.o /usr/local/include/
+sudo sudo mkdir -p /usr/local/include
+sudo mv toolbox.mod /usr/local/include/
+sudo mv toolbox.o /usr/local/include/
+sudo mv toolbox_debug.o /usr/local/include/
 
 
 

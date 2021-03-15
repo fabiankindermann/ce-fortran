@@ -23,9 +23,11 @@ cd "$( cd "$( dirname "$0" )" && pwd )"
 # ASK FOR INSTALLATION CONFIRMATION
 
 echo
-echo This script installs Fortran to your system.
+echo "This script installs Fortran to your system."
 echo
-echo ATTENTION: Fortran must already be installed using our original installation files.
+echo "ATTENTION: Fortran must already be installed using our original installation files."
+echo
+echo "THIS SCRIPT NEEDS ROOT PRIVILEGES FOR SOME INSTALLATION STEPS!!!"
 echo 
 read -rsp $'Do you want to continue (y/n)?' -n 1 key
 echo
@@ -43,10 +45,10 @@ gfortran -c -Werror -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -f
 gfortran -c -O3 -ffree-line-length-none ./../toolbox/toolbox.f90 -o toolbox.o
 
 # copy the toolbox to the working directory
-mkdir -p /usr/local/include
-mv toolbox.mod /usr/local/include/
-mv toolbox.o /usr/local/include/
-mv toolbox_debug.o /usr/local/include/
+sudo mkdir -p /usr/local/include
+sudo mv toolbox.mod /usr/local/include/
+sudo mv toolbox.o /usr/local/include/
+sudo v toolbox_debug.o /usr/local/include/
 
 
 
