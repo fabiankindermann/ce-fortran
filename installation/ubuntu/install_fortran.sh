@@ -91,8 +91,8 @@ echo 'beep_on_errors=false' >>  "geany.conf"
 
 # update geany configuration
 mkdir -p ~/.config/geany/filedefs/
-cp ./src/filetypes.fortran ~/.config/geany/filedefs/filetypes.fortran
-cp ./src/geany.conf ~/.config/geany/geany.conf
+mv ./filetypes.fortran ~/.config/geany/filedefs/filetypes.fortran
+mv ./geany.conf ~/.config/geany/geany.conf
 sudo chmod 664 ~/.config/geany/filedefs/filetypes.fortran
 sudo chown $USER:$USER -c ~/.config/geany/filedefs/filetypes.fortran
 sudo chmod 664 ~/.config/geany/geany.conf
