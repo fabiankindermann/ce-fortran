@@ -80,8 +80,8 @@ echo beep_on_errors=false >>  "geany.conf"
 
 # update geany configuration
 mkdir -p ~/.config/geany/filedefs/
-sudo mv ./src/filetypes.fortran ~/.config/geany/filedefs/filetypes.fortran
-sudo mv ./src/geany.conf ~/.config/geany/geany.conf
+sudo mv ./filetypes.fortran ~/.config/geany/filedefs/filetypes.fortran
+sudo mv ./geany.conf ~/.config/geany/geany.conf
 
 
 ## INSTALL THE TOOLBOX
