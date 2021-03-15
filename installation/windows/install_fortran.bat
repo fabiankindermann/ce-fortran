@@ -131,13 +131,13 @@ geanyins.exe /S
 
 
 
-:: PATH GEANY FOR USE WITH FORTRAN
+:: PATCH GEANY FOR USE WITH FORTRAN
 
 :: Fortran compilation file
 set locnew=%location:\=\\%
 ECHO [build-menu] >  "filetypes.fortran"
 ECHO FT_00_LB=_Compile >> "filetypes.fortran"
-ECHO FT_00_CM=gfortran -O3 -Wno-unused -ffree-line-length-none -fopenmp -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -I"%locnew%\\include" -c "%%f" -o "%%e.o" >> "filetypes.fortran"
+ECHO FT_00_CM=gfortran -O3 -Wno-unused -frecursive -ffree-line-length-none -fopenmp -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -I"%locnew%\\include" -c "%%f" -o "%%e.o" >> "filetypes.fortran"
 ECHO FT_00_WD= >> "filetypes.fortran"
 ECHO FT_01_LB=_Build >> "filetypes.fortran"
 ECHO FT_01_CM=gfortran -O3 "%locnew%\\include\\toolbox.o" "%%e.o" -o prog >> "filetypes.fortran"
@@ -167,8 +167,8 @@ move geany.conf "%userprofile%\AppData\Roaming\geany\geany.conf"
 
 :: INSTALL THE TOOLBOX
 
-gfortran -c -Wno-unused -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../../toolbox/toolbox.f90 -o toolbox_debug.o
-gfortran -c -O3 ./../../toolbox/toolbox.f90 -o toolbox.o
+gfortran -c -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../../toolbox/toolbox.f90 -o toolbox_debug.o
+gfortran -c -O3 -ffree-line-length-none ./../../toolbox/toolbox.f90 -o toolbox.o
 mkdir "%location%\include\" 2>nul
 del /Q "%location%\include\toolbox.mod" 2>nul
 del /Q "%location%\include\toolbox.o" 2>nul
@@ -202,6 +202,7 @@ ASSOC .f08=Geany.ProjectFile
 
 
 :: IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE INSTALLED PROPERLY
+
 :theend
 ECHO. 
 ECHO. 

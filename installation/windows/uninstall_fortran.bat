@@ -3,10 +3,7 @@
 :: This code is published under the GNU General Public License v3
 ::                         (https://www.gnu.org/licenses/gpl-3.0.en.html)
 ::
-:: Authors: Hans Fehr and Fabian Kindermann
-::          contact@ce-fortran.com
-::
-:: #VC# VERSION: 1.5  (06 January 2021)
+:: Author: Fabian Kindermann (contact@ce-fortran.com)
 
 @ECHO off
 chcp 1252

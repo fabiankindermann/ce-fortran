@@ -1,4 +1,4 @@
-:: A SHELL SCRIPT FOR ONLY INSTALLING THE TOOLBOX TO A WINDOWS SYSTEM
+:: A SHELL SCRIPT FOR UPDATING THE TOOLBOX ON A WINDOWS SYSTEM
 ::
 :: ATTENTION: Fortran must already be installed using our original installation files.
 ::
@@ -39,11 +39,13 @@ exit /B
 
 :: ASK FOR INSTALLATION DIRECTORY CHANGES
 ECHO.
-ECHO This script installs our toolbox into the directory: 
+ECHO This script updates our toolbox into the directory: 
 ECHO.
 ECHO    %location%
 ECHO.
 ECHO To change the installation directory, read the online instructions.
+ECHO.
+ECHO ATTENTION: Fortran must already be installed using our original installation files.
 ECHO. 
 set /p temp=Do you want to continue (y/n)?
 ECHO.
@@ -55,15 +57,10 @@ if %exitres%==T exit
 
 
 
-:: THIS IS TO INSTALL THE TOOLBOX
+:: INSTALL THE TOOLBOX
 
-ECHO.
-ECHO ...COMPILING TOOLBOX...
-gfortran -c -Wno-unused -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../toolbox/toolbox.f90 -o toolbox_debug.o
-gfortran -c -O3 ./../toolbox/toolbox.f90 -o toolbox.o
-ECHO ...DONE...
-ECHO.
-ECHO ...COPYING TO INCLUDE DIRECTORY...
+gfortran -c -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../toolbox/toolbox.f90 -o toolbox_debug.o
+gfortran -c -O3 -ffree-line-length-none ./../../toolbox/toolbox.f90 -o toolbox.o
 mkdir "%location%\include\" 2>nul
 del /Q "%location%\include\toolbox.mod" 2>nul
 del /Q "%location%\include\toolbox.o" 2>nul
@@ -71,17 +68,16 @@ del /Q "%location%\include\toolbox_debug.o" 2>nul
 move "toolbox.mod" "%location%\include\"
 move "toolbox.o" "%location%\include%\"
 move "toolbox_debug.o" "%location%\include%\"
-ECHO ...DONE...
-ECHO.
 
 
 
 :: IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE INSTALLED PROPERLY
+
 :theend
 ECHO. 
 ECHO. 
 ECHO. 
-ECHO ...INSTALLATION COMPLETED.
+ECHO ...TOOLBOX UPDATE COMPLETED.
 ECHO.
 ECHO.
 ECHO In case you encountered any problem, check on www.ce-fortran.com for help.

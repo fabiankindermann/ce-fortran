@@ -1,21 +1,21 @@
 #!/bin/bash
 
 
-# A SHELL SCRIPT FOR UNINSTALLING FORTRAN FROM MAC OS X
+# A SHELL SCRIPT FOR UNINSTALLING FORTRAN FROM MACOS
 #
 # This code is published under the GNU General Public License v3
 #                         (https://www.gnu.org/licenses/gpl-3.0.en.html)
 #
-# Authors: Hans Fehr and Fabian Kindermann
-#          contact@ce-fortran.com
-#
-# #VC# VERSION: 1.5  (06 January 2021)
+# Author: Fabian Kindermann (contact@ce-fortran.com)
 
 
 # set the current directory as running directory
 cd "$( cd "$( dirname "$0" )" && pwd )"
 
+
+
 # ASK FOR UNINSTALLATION CONFIRMATION
+
 echo
 echo This script uninstalls Fortran/GNU Plot/Geany from your system.
 echo 
@@ -26,33 +26,31 @@ if [ "$key" != "y" ]; then
     exit 0
 fi
 
-# and copy the toolbox to the preferred working directory
-echo
-echo ...REMOVE TOOLBOX...
+
+
+# REMOVE THE TOOLBOX FILES
+
 sudo rm -f /usr/local/include/toolbox.mod
 sudo rm -f /usr/local/include/toolbox.o
 sudo rm -f /usr/local/include/toolbox_debug.o
 sudo rm -f /usr/local/include/toolbox_version.command
-echo ...DONE...
-echo
 
-# completely uninstall homebrew with all packages
-echo 
-echo ...UNINSTALLING HOMEBREW...
+
+
+# COMPLETELY UNINSTALL HOMEBREW
+
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh)"
-echo ...DONE...
-echo
 
-# remove geany application
-echo
-echo ...UNINSTALLING GEANY...
+
+# REMOVE GEANY APPLICATION
+
 rm -rf /Applications/Geany.app/
 rm -rf ~/.config/geany/
-echo ...DONE...
-echo
 
 
-# if everything ran correctly, at this point everything should be uninstalled properly
+
+:: IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE UNINSTALLED PROPERLY
+
 echo  
 echo ...UNINSTALLATION PROCESS COMPLETED.
 echo 
