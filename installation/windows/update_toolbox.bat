@@ -60,7 +60,7 @@ if %exitres%==T exit
 :: INSTALL THE TOOLBOX
 
 gfortran -c -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../toolbox/toolbox.f90 -o toolbox_debug.o
-gfortran -c -O3 -ffree-line-length-none ./../../toolbox/toolbox.f90 -o toolbox.o
+gfortran -c -O3 -ffree-line-length-none ./../toolbox/toolbox.f90 -o toolbox.o
 mkdir "%location%\include\" 2>nul
 del /Q "%location%\include\toolbox.mod" 2>nul
 del /Q "%location%\include\toolbox.o" 2>nul
