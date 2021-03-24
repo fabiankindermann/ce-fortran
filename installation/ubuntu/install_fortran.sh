@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # A SHELL SCRIPT FOR INSTALLING FORTRAN ON UBUNTU
 #
 # This code is published under the GNU General Public License v3
@@ -13,9 +12,7 @@
 cd "$( cd "$( dirname "$0" )" && pwd )"
 
 
-
 # ASK FOR INSTALLATION CONFIRMATION
-
 echo
 echo "This script installs Fortran to your system."
 echo
@@ -31,36 +28,21 @@ if [ "$key" != "y" ]; then
 fi
 
 
-
 # INSTALL BUILD ESSENTIAL TOOLS IF NOT YET DONE
-
 sudo apt-get update
 sudo apt-get --yes install build-essential
 
-
-
 # INSTALL GNU GFORTRAN COMPILER
-
 sudo apt-get --yes install gfortran
 
-
-
 # INSTALL GNU DEBUGGER
-
 sudo apt-get --yes install gdb
 
-
-
 # INSTALL GNUPLOT
-
 sudo apt-get --yes install gnuplot gnuplot-x11
 
-
-
 # INSTALL GEANY TEXT EDITOR
-
 sudo apt-get --yes install geany
-
 
 
 # PATCH GEANY FOR USE WITH FORTRAN
@@ -117,9 +99,7 @@ sudo mv toolbox.o /usr/local/include/
 sudo mv toolbox_debug.o /usr/local/include/
 
 
-
 # IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE INSTALLED PROPERLY
-
 echo  
 echo ...INSTALLATION COMPLETED.
 echo 

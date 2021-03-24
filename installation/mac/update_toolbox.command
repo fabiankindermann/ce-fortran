@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # A SHELL SCRIPT FOR UPDATING THE TOOLBOX ON MACOS
 #
 # ATTENTION: Fortran must already be installed using our original installation files.
@@ -15,9 +14,7 @@
 cd "$( cd "$( dirname "$0" )" && pwd )"
 
 
-
 # ASK FOR INSTALLATION CONFIRMATION
-
 echo
 echo This script installs Fortran to your system.
 echo
@@ -29,7 +26,6 @@ echo
 if [ "$key" != "y" ]; then
     exit 0
 fi
-
 
 
 ## INSTALL THE TOOLBOX
@@ -45,9 +41,7 @@ sudo mv toolbox.o /usr/local/include/
 sudo mv toolbox_debug.o /usr/local/include/
 
 
-
 # IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE INSTALLED PROPERLY
-
 echo  
 echo ...TOOLBOX UPDATE COMPLETED.
 echo 

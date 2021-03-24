@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # A SHELL SCRIPT FOR UNINSTALLING FORTRAN FROM UBUNTU
 #
 # This code is published under the GNU General Public License v3
@@ -11,8 +10,6 @@
 
 # set the current directory as running directory
 cd "$( cd "$( dirname "$0" )" && pwd )"
-
-
 
 
 # ASK FOR UNINSTALLATION CONFIRMATION
@@ -30,9 +27,7 @@ if [ "$key" != "y" ]; then
 fi
 
 
-
 # REMOVE THE TOOLBOX
-
 sudo rm -f /usr/local/include/toolbox.mod
 sudo rm -f /usr/local/include/toolbox.o
 sudo rm -f /usr/local/include/toolbox_debug.o
@@ -49,34 +44,20 @@ sudo rm -r ~/.config/geany
 sudo rm -f ~/Desktop/geany.desktop
 
 
-
 # UNINSTALL GNUPLOT
-
 sudo apt-get --yes remove gnuplot gnuplot-x11
 
-
-
 # UNINSTALL GNU FORTRAN COMPILER
-
 sudo apt-get --yes remove gfortran
 
-
-
 # DELETE DEPENDENCIES
-
 sudo apt-get --yes autoremove
 
-
-
 # CLEAN UP CONFIGURATIONS
-
 sudo sudo apt-get --yes clean
 
 
-
-
 # IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE UNINSTALLED PROPERLY
-
 echo  
 echo ...UNINSTALLATION PROCESS COMPLETED.
 echo 

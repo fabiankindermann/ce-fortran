@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # A SHELL SCRIPT FOR INSTALLING FORTRAN ON MACOS
 #
 # This code is published under the GNU General Public License v3
@@ -13,9 +12,7 @@
 cd "$( cd "$( dirname "$0" )" && pwd )"
 
 
-
 # ASK FOR INSTALLATION CONFIRMATION
-
 echo
 echo This script installs Fortran to your system.
 echo 
@@ -27,29 +24,17 @@ if [ "$key" != "y" ]; then
 fi
 
 
-
 # INSTALL HOMEBREW WHICH WILL GOVERN THE INSTALLATION OF EVERTHING ELSE
-
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
 
-
-
 # INSTALL GNU GFORTRAN COMPILER
-
 brew install gcc
 
-
-
 # INSTALL GNUPLOT
-
 brew install gnuplot
 
-
-
 # INSTALL GEANY TEXT EDITOR
-
 brew install --cask geany
-
 
 
 # PATCH GEANY FOR USE WITH FORTRAN
@@ -97,9 +82,7 @@ sudo mv toolbox.o /usr/local/include/
 sudo mv toolbox_debug.o /usr/local/include/
 
 
-
 # IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE INSTALLED PROPERLY
-
 echo  
 echo ...INSTALLATION COMPLETED.
 echo 

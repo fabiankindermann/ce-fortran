@@ -8,13 +8,10 @@
 @ECHO off
 chcp 1252
 
-
 SET "location=C:\cygwin"
 
 
-
 :: GET INTO ADMINSTRATOR MODE
-
 :checkPrivileges 
 NET FILE 1>NUL 2>NUL
 if '%errorlevel%' == '0' ( goto gotPrivileges ) else ( goto getPrivileges ) 
@@ -35,9 +32,7 @@ exit /B
 @cd /d "%~dp0"
 
 
-
 :: ASK FOR INSTALLATION DIRECTORY CHANGES
-
 ECHO.
 ECHO This script installs Fortran and its development components into the directory: 
 ECHO.
@@ -54,12 +49,9 @@ if %temp:~-0,1%==Y set exitres=F
 if %exitres%==T exit
 
 
-
 :: GENERATE DOWNLOAD FOLDER FOR EVERYTHING THAT NEEDS TO BE DOWNLOADED
-
 mkdir downloads
 @cd /d downloads
-
 
 
 :: INSTALL CYGWIN
@@ -72,7 +64,6 @@ cygwin.exe -q -s http://ftp.fau.de/cygwin --no-shortcuts --root "%location%" --p
 
 :: move the cygwin.exe file to the cygwin directory for later use
 move "cygwin.exe" "%location%\bin"
-
 
 
 :: UPDATE PATH VARIABLE
@@ -93,7 +84,6 @@ if errorlevel 1 (
 
 :: add path to environment variables
 reg add "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\Environment" /v Path /t REG_EXPAND_SZ /d "%PATH%" /f
-
 
 
 :: INSTALL GNUPLOT
@@ -117,7 +107,6 @@ chmod +x gnuplotins.exe
 gnuplotins.exe /SILENT /LOADINF="gnusetup.log"
 
 
-
 :: INSTALL GEANY
 
 :: download file
@@ -128,7 +117,6 @@ chmod +x geanyins.exe
 
 :: run installer silently
 geanyins.exe /S
-
 
 
 :: PATCH GEANY FOR USE WITH FORTRAN
@@ -164,7 +152,6 @@ move filetypes.fortran "%userprofile%\AppData\Roaming\geany\filedefs\filetypes.f
 move geany.conf "%userprofile%\AppData\Roaming\geany\geany.conf"
 
 
-
 :: INSTALL THE TOOLBOX
 
 gfortran -c -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../../toolbox/toolbox.f90 -o toolbox_debug.o
@@ -176,7 +163,6 @@ del /Q "%location%\include\toolbox_debug.o" 2>nul
 move "toolbox.mod" "%location%\include\"
 move "toolbox.o" "%location%\include%\"
 move "toolbox_debug.o" "%location%\include%\"
-
 
 
 :: ASK FOR FILE ASSOCIATION
@@ -198,7 +184,6 @@ ASSOC .f90=Geany.ProjectFile
 ASSOC .f95=Geany.ProjectFile
 ASSOC .f03=Geany.ProjectFile
 ASSOC .f08=Geany.ProjectFile
-
 
 
 :: IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE INSTALLED PROPERLY

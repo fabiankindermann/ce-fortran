@@ -15,7 +15,6 @@ SET "location=C:\cygwin"
 
 
 :: GET INTO ADMINSTRATOR MODE
-
 :checkPrivileges 
 NET FILE 1>NUL 2>NUL
 if '%errorlevel%' == '0' ( goto gotPrivileges ) else ( goto getPrivileges ) 
@@ -34,7 +33,6 @@ exit /B
 :gotPrivileges
 @setlocal enableextensions
 @cd /d "%~dp0"
-
 
 
 :: ASK FOR INSTALLATION DIRECTORY CHANGES
@@ -56,9 +54,7 @@ if %temp:~-0,1%==Y set exitres=F
 if %exitres%==T exit
 
 
-
 :: INSTALL THE TOOLBOX
-
 gfortran -c -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../toolbox/toolbox.f90 -o toolbox_debug.o
 gfortran -c -O3 -ffree-line-length-none ./../toolbox/toolbox.f90 -o toolbox.o
 mkdir "%location%\include\" 2>nul
@@ -70,9 +66,7 @@ move "toolbox.o" "%location%\include%\"
 move "toolbox_debug.o" "%location%\include%\"
 
 
-
 :: IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE INSTALLED PROPERLY
-
 :theend
 ECHO. 
 ECHO. 

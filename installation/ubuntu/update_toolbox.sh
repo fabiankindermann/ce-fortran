@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # A SHELL SCRIPT FOR UPDATING THE TOOLBOX ON UBUNTU
 #
 # ATTENTION: Fortran must already be installed using our original installation files.
@@ -16,12 +15,10 @@ cd "$( cd "$( dirname "$0" )" && pwd )"
 
 
 # CHECK WHETHER THE SCRIPT HAS ROOT PRIVILIGES
-
 [ "$UID" -eq 0 ] || { echo ; echo "THIS SCRIPT NEEDS TO BE RUN WITH ROOT PRIVILEGES!!!" ; echo ; echo "If you don't want this, use our docker images." ; echo ; echo "PLEASE TYPE YOUR PASSWORD:"; exec sudo "$0" "$@";}
 
 
 # ASK FOR INSTALLATION CONFIRMATION
-
 echo
 echo "This script installs Fortran to your system."
 echo
@@ -37,7 +34,6 @@ if [ "$key" != "y" ]; then
 fi
 
 
-
 ## INSTALL THE TOOLBOX
 
 # compile the toolbox
@@ -51,9 +47,7 @@ sudo mv toolbox.o /usr/local/include/
 sudo v toolbox_debug.o /usr/local/include/
 
 
-
 # IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE INSTALLED PROPERLY
-
 echo  
 echo ...TOOLBOX UPDATE COMPLETED.
 echo 

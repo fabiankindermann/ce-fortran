@@ -8,12 +8,10 @@
 @ECHO off
 chcp 1252
 
-
 SET "location=C:\cygwin"
 
 
 :: GET INTO ADMINSTRATOR MODE
-
 :checkPrivileges 
 NET FILE 1>NUL 2>NUL
 if '%errorlevel%' == '0' ( goto gotPrivileges ) else ( goto getPrivileges ) 
@@ -34,9 +32,7 @@ exit /B
 @cd /d "%~dp0"
 
 
-
 :: ASK FOR UNINSTALLATION PROCESS
-
 ECHO.
 ECHO This script completely uninstalls CYGWIN/GNU Plot/Geany from your system location:
 ECHO.
@@ -51,10 +47,8 @@ if %temp:~-0,1%==Y set exitres=F
 if %exitres%==T exit
 
 
-
 :: UNINSTALL CYGWIN COMPLETELY
 rmdir /s /q "%location%"
-
 
 
 :: ERASE CYGWIN REGISTRY ENTRIES
@@ -62,7 +56,6 @@ rmdir /s /q "%location%"
 :: backup current registry key
 reg DELETE "HKEY_LOCAL_MACHINE\SOFTWARE\Cygwin" /f
 reg DELETE "HKEY_CURRENT_USER\SOFTWARE\Cygwin" /f
-
 
 
 :: UPDATE PATH VARIABLE
@@ -91,27 +84,19 @@ reg query "HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control\Session Manager\E
 EndLocal
 
 
-
 :: UNINSTALL GNUPLOT
-
 "%ProgramFiles%\gnuplot\unins000.exe" /SILENT
 
 
-
 :: UNINSTALL GEANY
-
 "%ProgramFiles(x86)%\Geany\uninst.exe" /S
 
 
-
 :: REMOVE ALL GEANY TRACES
-
 rmdir /s /q "%userprofile%\AppData\Roaming\geany\" 2>nul
 
 
-
 :: IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE UNINSTALLED PROPERLY
-
 ECHO. 
 ECHO ...UNINSTALLATION PROCESS COMPLETED.
 ECHO.

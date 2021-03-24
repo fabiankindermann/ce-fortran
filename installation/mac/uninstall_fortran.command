@@ -1,6 +1,5 @@
 #!/bin/bash
 
-
 # A SHELL SCRIPT FOR UNINSTALLING FORTRAN FROM MACOS
 #
 # This code is published under the GNU General Public License v3
@@ -13,9 +12,7 @@
 cd "$( cd "$( dirname "$0" )" && pwd )"
 
 
-
 # ASK FOR UNINSTALLATION CONFIRMATION
-
 echo
 echo This script uninstalls Fortran/GNU Plot/Geany from your system.
 echo 
@@ -27,31 +24,23 @@ if [ "$key" != "y" ]; then
 fi
 
 
-
 # REMOVE THE TOOLBOX FILES
-
 sudo rm -f /usr/local/include/toolbox.mod
 sudo rm -f /usr/local/include/toolbox.o
 sudo rm -f /usr/local/include/toolbox_debug.o
 sudo rm -f /usr/local/include/toolbox_version.command
 
 
-
 # COMPLETELY UNINSTALL HOMEBREW
-
 /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/uninstall.sh)"
 
 
-
 # REMOVE GEANY APPLICATION
-
 rm -rf /Applications/Geany.app/
 rm -rf ~/.config/geany/
 
 
-
 # IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE UNINSTALLED PROPERLY
-
 echo  
 echo ...UNINSTALLATION PROCESS COMPLETED.
 echo 
