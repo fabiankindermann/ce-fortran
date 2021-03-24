@@ -10325,7 +10325,7 @@ contains
                 2*(gnu_mmax-1)+1,':',2*(gnu_mmax-1)+2,' '//trim(gnu_definitions(i1))
         endif
                         
-        write(213659, '(a)')'pause -1 "Press RETURN to continue..."'
+        write(213659, '(a)')'pause mouse close'
 
         ! write graph to file
         if(present(filename))then
@@ -11147,7 +11147,7 @@ contains
         ! write plot lines for 3D-data
         write(213659, '(a)')'splot "'//trim(dfile)//'" using 1:2:3 '//trim(definition)
                         
-        write(213659, '(a)')'pause -1 "Press RETURN to continue..."'
+        write(213659, '(a)')'pause mouse close'
 
         ! write graph to file
         if(present(filename))then
@@ -11408,7 +11408,7 @@ contains
         ! write plot lines for 3D-data
         write(213659, '(a)')'splot "'//trim(dfile)//'" using 1:2:3 '//trim(definition)
                         
-        write(213659, '(a)')'pause -1 "Press RETURN to continue..."'
+        write(213659, '(a)')'pause mouse close'
 
         ! write graph to file
         if(present(filename))then
