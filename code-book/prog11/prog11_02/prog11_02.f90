@@ -514,9 +514,9 @@ contains
                         call linint_Grow(aplus(ij-1, ia, ip, is, itm), a_l, a_u, a_grow, NA, ial, iar, varphi)
 
                         ! restrict values to grid just in case
-                        ial = min(ial, NA)
-                        iar = min(iar, NA)
-                        varphi = min(varphi, 1d0)
+                        ial = max(min(ial, NA-1), 0)
+                        iar = max(min(iar, NA), 1)
+                        varphi = max(min(varphi, 1d0), 0d0)
 
                         ! redistribute households
                         do is_p = 1, NS
