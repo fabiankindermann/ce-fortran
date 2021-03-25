@@ -1,4 +1,4 @@
-# A DOCKER FILE TO BUNDLE THE CE-FORTRAN ENVIRONMENT INTO A DOCKER CONTAINER
+# A DOCKER FILE TO BUNDLE THE CE-FORTRAN ENVIRONMENT INTO A DOCKER CONTAINER WITH GUI
 #
 # Special thanks to Lars Vilhuber for starting this project.
 #
@@ -22,6 +22,9 @@ COPY ./code-solution ./code-solution
 
 # COPY TOOLBOX
 COPY toolbox.f90 .
+
+# ADD FONT FILE
+COPY ./localfonts.conf /etc/fonts/local.conf
 
 # INSTALL FORTRAN DEVELOPMENT ENVIRONMENT
 RUN chmod a+rx install_fortran.sh \  

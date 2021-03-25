@@ -15,6 +15,21 @@ apt --yes install build-essential
 apt --yes install dconf-editor dbus-x11
 apt --yes install gedit gnome-terminal
 
+
+# INSTALL MS CORE FONTS
+
+# this part is adapted from Frank Hoffsümmer (https://github.com/captnswing/msttcorefonts)
+apt update
+apt install -y --no-install-recommends software-properties-common curl
+apt-add-repository multiverse
+apt update
+
+# ms core fonts
+echo "ttf-mscorefonts-installer msttcorefonts/accepted-mscorefonts-eula select true" | debconf-set-selections
+apt install -y --no-install-recommends fontconfig ttf-mscorefonts-installer
+RUN fc-cache -f -v
+
+
 # INSTALL GNU GFORTRAN COMPILER
 apt --yes install gfortran
 
