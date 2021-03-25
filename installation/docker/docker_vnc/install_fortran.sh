@@ -9,23 +9,24 @@
 
 
 # INSTALL BUILD ESSENTIAL TOOLS IF NOT YET DONE
-apt-get update
-apt-get upgrade
-apt-get --yes install build-essential
-apt-get --yes dconf-editor dbus-x11
+apt update
+apt upgrade
+apt --yes install build-essential
+apt --yes install dconf-editor dbus-x11
+apt --yes install gedit gnome-terminal
 
 # INSTALL GNU GFORTRAN COMPILER
-apt-get --yes install gfortran
+apt --yes install gfortran
 
 # INSTALL GNU DEBUGGER
-apt-get --yes install gdb
+apt --yes install gdb
 
 # INSTALL GNUPLOT
-apt-get --yes install gnuplot gnuplot-x11
+apt --yes install gnuplot gnuplot-x11
 
 # INSTALL GEANY TEXT EDITOR
-apt-get --yes install yaru-theme-icon
-apt-get --yes install geany
+apt --yes install yaru-theme-icon
+apt --yes install geany
 
 
 # PATCH GEANY FOR USE WITH FORTRAN

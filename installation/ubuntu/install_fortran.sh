@@ -29,20 +29,20 @@ fi
 
 
 # INSTALL BUILD ESSENTIAL TOOLS IF NOT YET DONE
-sudo apt-get update
-sudo apt-get --yes install build-essential
+sudo apt update
+sudo apt --yes install build-essential
 
 # INSTALL GNU GFORTRAN COMPILER
-sudo apt-get --yes install gfortran
+sudo apt --yes install gfortran
 
 # INSTALL GNU DEBUGGER
-sudo apt-get --yes install gdb
+sudo apt --yes install gdb
 
 # INSTALL GNUPLOT
-sudo apt-get --yes install gnuplot gnuplot-x11
+sudo apt --yes install gnuplot gnuplot-x11
 
 # INSTALL GEANY TEXT EDITOR
-sudo apt-get --yes install geany
+sudo apt --yes install geany
 
 
 # PATCH GEANY FOR USE WITH FORTRAN

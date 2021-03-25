@@ -15,10 +15,10 @@ WORKDIR /root
 COPY install_fortran.sh .
 
 # COPY CE-FORTRAN PROGRAMS
-COPY ./cef_progs ./cef_progs
+COPY ./code-book ./code-book
 
 # COPY CE-FORTRAN SOLUTIONS
-COPY ./cef_solutions ./cef_solutions
+COPY ./code-solution ./code-solution
 
 # COPY TOOLBOX
 COPY toolbox.f90 .

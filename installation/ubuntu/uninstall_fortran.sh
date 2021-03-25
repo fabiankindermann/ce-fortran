@@ -37,7 +37,7 @@ sudo rm -f /usr/local/include/toolbox_version.sh
 # UNINSTALL GEANY
 
 # uninstall software
-sudo apt-get --yes remove geany
+sudo apt --yes remove geany
 sudo rm -r ~/.config/geany
 
 # remove desktop icon
@@ -45,16 +45,16 @@ sudo rm -f ~/Desktop/geany.desktop
 
 
 # UNINSTALL GNUPLOT
-sudo apt-get --yes remove gnuplot gnuplot-x11
+sudo apt --yes remove gnuplot gnuplot-x11
 
 # UNINSTALL GNU FORTRAN COMPILER
-sudo apt-get --yes remove gfortran
+sudo apt --yes remove gfortran
 
 # DELETE DEPENDENCIES
-sudo apt-get --yes autoremove
+sudo apt --yes autoremove
 
 # CLEAN UP CONFIGURATIONS
-sudo sudo apt-get --yes clean
+sudo sudo apt --yes clean
 
 
 # IF EVERYTHING RAN CORRECTLY, AT THIS POINT EVERYTHING SHOULD BE UNINSTALLED PROPERLY
