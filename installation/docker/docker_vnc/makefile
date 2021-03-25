@@ -5,6 +5,8 @@
 #
 # Author: Fabian Kindermann (contact@ce-fortran.com)
 
+name = "fabiankindermann/ce-fortran-vnc"
+
 # CLEAN UP THE WORKSPACE
 .PHONY: clean
 clean :
