@@ -9,8 +9,6 @@
 ! Authors: Hans Fehr, Maurice Hofmann and Fabian Kindermann
 !          contact@ce-fortran.com
 !
-! #VC# VERSION: 1.0  (16 December 2019)
-!
 !##############################################################################
 program Fibonacci
 
