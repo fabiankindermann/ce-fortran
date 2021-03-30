@@ -1,3 +1,11 @@
 # Mac Structure Files #
 #######################
 .DS_Store
+
+# Fortran Compile Files #
+#########################
+*.mod
+*.o
+*.obj
+*.exe
+build/

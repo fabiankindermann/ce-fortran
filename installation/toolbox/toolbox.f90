@@ -14,8 +14,6 @@
 !     Fehr, H. & Kindermann, F. (2018). Introduction to Computational
 !         Economics using Fortran. Oxford: Oxford University Press.
 !
-! #VC# VERSION: 1.4  (06 January 2021)
-!
 !##############################################################################
 !##############################################################################
 module toolbox
@@ -58,6 +56,7 @@ logical, private :: gnu_addtoplot = .false.
 logical, private :: gnu_dolegend = .false.
 logical, private :: gnu_histogram = .false.
 integer, private :: gnu_nmax, gnu_mmax
+integer, private :: gnu_plotnumber = 0
 
 ! plot data for gnuplot
 real*8, allocatable, private :: gnu_x(:, :), gnu_y(:, :)
@@ -789,11 +788,13 @@ contains
     !##############################################################################
     subroutine tic()
     
+        use omp_lib
     
+
         !##### ROUTINE CODE #######################################################
         
         ! get cpu time
-        call cpu_time(starttime_cpu)
+        starttime_cpu = omp_get_wtime()
     
     end subroutine tic
     
@@ -805,6 +806,8 @@ contains
     !##############################################################################
     subroutine toc(file)
     
+        use omp_lib
+
     
         !##### INPUT/OUTPUT VARIABLES #############################################
         
@@ -829,7 +832,7 @@ contains
         endif
         
         ! get cpu time
-        call cpu_time(time)
+        time = omp_get_wtime()
         
         ! calculate time difference
         time = time - starttime_cpu
@@ -10155,25 +10158,31 @@ contains
     !
     ! Actually creates the plot files.
     !##############################################################################
-    subroutine execplot(xlim, xticks, xlabel, ylim, yticks, ylabel, title, &
-            legend, filename, filetype, output)
+    subroutine execplot(xlim, xticks, xtrange, xlabel, ylim, yticks, ytrange, ylabel, title, &
+        legend, ratio, nogrid, nodisplay, filename, filetype, output)
 
         implicit none
 
 
         !##### INPUT/OUTPUT VARIABLES #############################################
 
-        ! x axis definitial
+        ! x axis definitiion
         real*8, optional :: xlim(2)
 
         ! x axis tick definitions
         real*8, optional :: xticks
+        
+        ! x axis range for ticks
+        real*8, optional :: xtrange(2)
 
-        ! y axis definitial
+        ! y axis definition
         real*8, optional :: ylim(2)
 
         ! y axis tick definitions
         real*8, optional :: yticks
+        
+        ! y axis range for ticks
+        real*8, optional :: ytrange(2)
 
         ! output file name
         character(LEN=*), optional :: title
@@ -10186,6 +10195,15 @@ contains
 
         ! legend position
         character(LEN=2), optional :: legend
+        
+        ! y-to-x axis ratio
+        real*8, optional :: ratio
+        
+        ! print no grid
+        logical, optional :: nogrid
+        
+        ! should plot windows be shown or not
+        logical, optional :: nodisplay
 
         ! output file name
         character(LEN=*), optional :: filename
@@ -10195,22 +10213,52 @@ contains
 
         ! output file name
         character(LEN=*), optional :: output
-
+        
         !##### OTHER VARIABLES ####################################################
  
         integer :: i1, i2
-        character(LEN=3) :: ft
-        character(LEN=150) :: cfile, dfile
+        logical :: nw_copy
+        character(LEN=3) :: ft, plotnumber
+        character(LEN=150) :: cfile, dfile, pfile, term, location
      
      
         !##### ROUTINE CODE #######################################################
 
+        ! check for whether to display graph
+        nw_copy = .false.
+        if(present(nodisplay))then
+            if(nodisplay)nw_copy = .true.
+        endif
+        
+        if(access('/usr/local/include/toolbox_visual.txt', ' ') == 0)then
+            nw_copy = .true.
+        endif
+
+        ! create output files
         if(present(output))then
-            cfile = output//'_c.dat'
-            dfile = output//'_d.dat'
+            cfile = trim(output)//'_c.dat'
+            dfile = trim(output)//'_d.dat'
         else
-            cfile = 'command13545431.dat'
-            dfile = 'plotdata13545431.dat'
+            ! increment gnu_plotnumber by 1 (restart counting after 999 plots)
+            gnu_plotnumber = gnu_plotnumber + 1
+            if(gnu_plotnumber >= 1000) gnu_plotnumber = 1
+
+            if(gnu_plotnumber < 10)then
+                write(plotnumber,'(i1)')gnu_plotnumber
+            elseif(gnu_plotnumber < 100)then
+                write(plotnumber,'(i2)')gnu_plotnumber
+            else
+                write(plotnumber,'(i3)')gnu_plotnumber
+            endif
+            cfile = 'gnufigure_'//trim(plotnumber)//'_c.dat'
+            dfile = 'gnufigure_'//trim(plotnumber)//'_d.dat'
+        endif
+
+        ! create plot file name
+        if(present(filename))then
+            pfile = trim(filename)
+        else
+            pfile = 'gnufigure_'//trim(plotnumber)
         endif
 
         ! write the output data file
@@ -10223,29 +10271,70 @@ contains
         ! write the command file
         open(213659,file=trim(cfile))
 
-        ! set terminal and grid
-        write(213659, '(a)')'if (strstrt(GPVAL_TERMINALS, "wxt") > 0) {'
-        write(213659, '(a)')'    set terminal wxt title "Gnuplot"'
-        write(213659, '(a)')'} else {'
-        write(213659, '(a)')'    if (strstrt(GPVAL_TERMINALS, "x11") > 0) {'
-        write(213659, '(a)')'        set terminal x11'
-        write(213659, '(a)')'    } else {'
-        write(213659, '(a)')'        if (strstrt(GPVAL_TERMINALS, "qt") > 0) {'
-        write(213659, '(a)')'            set terminal qt'
-        write(213659, '(a)')'        } else {'
-        write(213659, '(a)')'            print ""'
-        write(213659, '(a)')'            print "ATTENTION: There seems to be NO VALID TERMINAL installed in "'
-        write(213659, '(a)')'            print "           your version of gnuplot. It might be a good idea to "'
-        write(213659, '(a)')'            print "           completely uninstall your Fortran/gnuplot/geany installation"'
-        write(213659, '(a)')'            print "           using the uninstallation files on www.ce-fortran.com. "'
-        write(213659, '(a)')'            print "           Afterwards you should reinstall the Fortran system again."'
-        write(213659, '(a)')'            print "           If this does not help, please refer to the forum."'
-        write(213659, '(a)')'            print ""'
-        write(213659, '(a)')'            q'
-        write(213659, '(a)')'        }'
-        write(213659, '(a)')'    }'
-        write(213659, '(a)')'}'
-        write(213659, '(a)')'set grid'
+        ! set file or terminal
+        if(nw_copy)then
+        
+            ! write graph to file            
+            ft = "pdf"
+            term = "pdfcairo"
+            if(present(filetype))then
+                if(filetype(1:3) == "png")then
+                    ft=  "png"
+                    term = "pngcairo"
+                endif
+                if(filetype(1:3) == "eps")then
+                    ft = "eps"
+                    term = "epscairo"
+                endif
+            endif
+            
+            if(present(ratio) .and. ft /= "png")then
+                write(term, '(a,f4.2)')trim(term)//" size 5,", 5d0*ratio
+            endif
+            
+            write(213659, *)
+            write(213659, '(a)')'set terminal '//trim(term)//'  color enhanced fontscale 0.7'
+            write(213659, '(a)')'set output "'//trim(pfile)//'.'//ft//'"'
+        else
+        
+            ! print graph to terminal
+
+            write(213659, '(a)')'if (strstrt(GPVAL_TERMINALS, "wxt") > 0) {'
+            write(213659, '(a)')'    set terminal wxt title "Gnuplot" enhanced'
+            write(213659, '(a)')'} else {'
+            write(213659, '(a)')'    if (strstrt(GPVAL_TERMINALS, "x11") > 0) {'
+            write(213659, '(a)')'        set terminal x11 enhanced'
+            write(213659, '(a)')'    } else {'
+            write(213659, '(a)')'        if (strstrt(GPVAL_TERMINALS, "qt") > 0) {'
+            write(213659, '(a)')'            set terminal qt enhanced'
+            write(213659, '(a)')'        } else {'
+            write(213659, '(a)')'            print ""'
+            write(213659, '(a)')'            print "ATTENTION: There seems to be NO VALID TERMINAL installed in "'
+            write(213659, '(a)')'            print "           your version of gnuplot. It might be a good idea to "'
+            write(213659, '(a)')'            print "           completely uninstall your Fortran/gnuplot/geany installation"'
+            write(213659, '(a)')'            print "           using the uninstallation files on www.ce-fortran.com. "'
+            write(213659, '(a)')'            print "           Afterwards you should reinstall the Fortran system again."'
+            write(213659, '(a)')'            print "           If this does not help, please refer to the forum."'
+            write(213659, '(a)')'            print ""'
+            write(213659, '(a)')'            q'
+            write(213659, '(a)')'        }'
+            write(213659, '(a)')'    }'
+            write(213659, '(a)')'}'
+        endif
+
+
+        ! set the grid definition
+        if(present(nogrid))then
+            if(nogrid)then
+                write(213659, '(a)')'unset grid'
+            else
+                write(213659, '(a)')'set grid'
+            endif
+        else
+            write(213659, '(a)')'set grid'
+        endif
+        
+        ! set histogram definition
         if(gnu_histogram)then
             write(213659, '(a)')'set style data histograms'
             write(213659, '(a)')'set style fill solid border -1'
@@ -10253,8 +10342,14 @@ contains
           
         ! set x axis
         if(present(xlim))write(213659, '(a,e13.5,a,e13.5,a)')'set xrange [',minval(xlim),':',maxval(xlim),']'
-        if(present(xticks))write(213659, '(a,e13.5)')'set xtics ',xticks        
-        if(present(xlabel))write(213659, '(a)')'set xlabel "'//xlabel//'"font ",12"'
+        if(present(xticks))then
+            if(present(xtrange))then
+                write(213659, '(a,e13.5,a,e13.5,a,e13.5)')'set xtics ',xtrange(1),',', xticks,',', xtrange(2)
+            else
+                write(213659, '(a,e13.5)')'set xtics ',xticks
+            endif
+        endif
+        if(present(xlabel))write(213659, '(a)')'set xlabel "'//xlabel//'"font ",14"'
         
         ! set y axis
         if(present(ylim) .and. .not. gnu_histogram) &
@@ -10268,8 +10363,14 @@ contains
             endif
         endif
                     
-        if(present(yticks))write(213659, '(a,e13.5)')'set ytics ',yticks        
-        if(present(ylabel))write(213659, '(a)')'set ylabel "'//ylabel//'"font ",12"'
+        if(present(yticks))then
+            if(present(ytrange))then
+                write(213659, '(a,e13.5,a,e13.5,a,e13.5)')'set ytics ',ytrange(1),',', yticks,',', ytrange(2)
+            else
+                write(213659, '(a,e13.5)')'set ytics ',yticks
+            endif
+        endif
+        if(present(ylabel))write(213659, '(a)')'set ylabel "'//ylabel//'"font ",14"'
 
         ! set title
         if(present(title))write(213659, '(a)')'set title "'//title//'" font ",16"'
@@ -10279,35 +10380,37 @@ contains
             if(present(legend))then            
                 select case (legend(1:2))
                     case("ln")
-                        write(213659, '(a)')'set key inside left top'
+                        location = 'inside left top'
                     case("ls")
-                        write(213659, '(a)')'set key inside left bottom'
+                        location = 'inside left bottom'
                     case("lo")
-                        write(213659, '(a)')'set key outside vert center left'
+                        location = 'outside vert center'
                     case("lb")
-                        write(213659, '(a)')'set key outside left below'
+                        location = 'outside left below'
                     case("rn")
-                        write(213659, '(a)')'set key inside right top'
+                        location = 'inside right top'
                     case("rs")
-                        write(213659, '(a)')'set key inside right bottom'
+                        location = 'inside right bottom'
                     case("ro")
-                        write(213659, '(a)')'set key outside vert center right'
+                        location = 'outside vert center right'
                     case("rb")
-                        write(213659, '(a)')'set key outside right below'
+                        location = 'key outside right below'
                     case("cn")
-                        write(213659, '(a)')'set key inside center top'
+                        location = 'inside center top'
                     case("cs")
-                        write(213659, '(a)')'set key inside center bottom'
+                        location = 'inside center bottom'
                     case("co")
-                        write(213659, '(a)')'set key outside vert top center'
+                        location = 'outside vert top center'
                     case("cb")
-                        write(213659, '(a)')'set key outside center below'
+                        location = 'outside center below'
                     case default
-                        write(213659, '(a)')'set key outside vert bottom center'
+                        location = 'outside vert bottom center' 
                 end select
             else
-                write(213659, '(a)')'set key center below'
+                location = 'center below'
             endif   
+            
+            write(213659, '(a)')'set key '//trim(location)//' box Left reverse spacing 1.2'
         else
             write(213659, '(a)')'unset key'
         endif
@@ -10325,18 +10428,33 @@ contains
                 2*(gnu_mmax-1)+1,':',2*(gnu_mmax-1)+2,' '//trim(gnu_definitions(i1))
         endif
                         
-        write(213659, '(a)')'pause mouse close'
+        if(.not. nw_copy)write(213659, '(a)')'pause mouse close'
 
         ! write graph to file
-        if(present(filename))then
-            ft = "eps"
-            if(present(filetype))then
-                if(filetype(1:3) == "png")ft= "png"
+        if(.not. nw_copy)then
+            if(present(filename))then                
+                ft = "pdf"
+                term = "pdfcairo"
+                if(present(filetype))then
+                    if(filetype(1:3) == "png")then
+                        ft=  "png"
+                        term = "pngcairo"
+                    endif
+                    if(filetype(1:3) == "eps")then
+                        ft = "eps"
+                        term = "epscairo"
+                    endif
+                endif
+                
+                if(present(ratio) .and. ft /= "png")then
+                    write(term, '(a,f4.2)')trim(term)//" size 5,", 5d0*ratio
+                endif
+                
+                write(213659, *)
+                write(213659, '(a)')'set terminal '//trim(term)//'  color enhanced fontscale 0.7'
+                write(213659, '(a)')'set output "'//trim(pfile)//'.'//ft//'"'
+                write(213659, '(a)')'replot'
             endif
-            write(213659, *)
-            write(213659, '(a)')'set terminal '//ft
-            write(213659, '(a)')'set output "'//filename//'.'//ft//'"'
-            write(213659, '(a)')'replot'
         endif
         
         write(213659, '(a)')'q'
@@ -10362,19 +10480,40 @@ contains
     !
     ! Plots a x-y-data column to the output file.
     !##############################################################################
-    subroutine plot(xin, yin, color, linewidth, marker, markersize, noline, legend)
+    !##############################################################################
+    ! SUBROUTINE plot
+    !
+    ! Plots a x-y-data column to the output file.
+    !##############################################################################
+    subroutine plot(xin, yin, color, linewidth, dashtype, marker, markersize, noline, legend)
 
         implicit none
 
 
         !##### INPUT/OUTPUT VARIABLES #############################################
         
+        ! input variables
         real*8, intent(in) :: xin(:), yin(:)
+
+        ! line color
         character(LEN=*), optional :: color
+
+        ! width of plotting line
         real*8, optional :: linewidth
+
+        ! dashtype of the plotting line
+        character(LEN=*), optional :: dashtype
+
+        ! marker definition
         integer, optional :: marker
+
+        ! size of the marker
         real*8, optional :: markersize
+
+        ! if no line should be plotted
         logical, optional :: noline
+
+        ! legend description
         character(LEN=*), optional :: legend
 
 
@@ -10520,6 +10659,10 @@ contains
             else
                 write(gnu_definitions(gnu_mmax), '(a,f8.2)')trim(gnu_definitions(gnu_mmax))//' lw ', 2d0
             endif
+            
+            if(present(dashtype)) then
+                write(gnu_definitions(gnu_mmax), '(a,f8.2)')trim(gnu_definitions(gnu_mmax))//' dashtype "'//adjustl(trim(dashtype))//'"'
+            endif
         endif
 
         ! get marker definition
@@ -10561,8 +10704,13 @@ contains
 
         !##### INPUT/OUTPUT VARIABLES #############################################
         
+        ! input variables
         real*8, intent(in) :: xin(:), yin(:)
+        
+        ! histogram color
         character(LEN=*), optional :: color
+
+        ! legend description
         character(LEN=*), optional :: legend
 
 
@@ -10699,13 +10847,28 @@ contains
 
         !##### INPUT/OUTPUT VARIABLES #############################################
         
+        ! input variables
         real*8, intent(in) :: xvalues(1:)
+
+        ! number of bins
         integer, intent(in) :: nbins
+
+        ! left end of the bins
         real*8, optional :: left
+
+        ! right end of the bins
         real*8, optional :: right
+
+        ! should observations lying outside of the bins be included?
         logical, optional :: incl_outside
+
+        ! absolute of relative values on y-axis
         logical, optional :: absolute
+
+        ! histogram color
         character(LEN=*), optional :: color
+
+        ! legend description
         character(LEN=*), optional :: legend
 
 
@@ -10881,9 +11044,9 @@ contains
     ! Credits to Patrick Wiesmann for providing a first version of a 3d plotting 
     !     subroutine during his research assistantship.
     !##############################################################################
-    subroutine plot3d_grid(xin, yin, zin, color, linewidth, marker, markersize, noline, &
-                xlim, xticks, xlabel, ylim, yticks, ylabel, zlim, zticks, zlevel, zlabel, & 
-                surf, surf_color, transparent, view, title, filename, filetype, output)
+    subroutine plot3d_grid(xin, yin, zin, color, linewidth, dashtype, marker, markersize, noline, &
+                xlim, xticks, xtrange, xlabel, ylim, yticks, ylabel, ytrange, zlim, zticks, ztrange, zlevel, zlabel, & 
+                surf, surf_color, transparent, view, title, nogrid, nodisplay, filename, filetype, output)
 
         implicit none
 
@@ -10893,11 +11056,14 @@ contains
         ! input variables
         real*8, intent(in) :: xin(:), yin(:), zin(:,:)
 
-        ! line and marker color
+        ! line color
         character(LEN=*), optional :: color
 
         ! width of the plotting line
         real*8, optional :: linewidth
+
+        ! dashtype of the plotting line
+        character(LEN=*), optional :: dashtype
 
         ! marker definition
         integer, optional :: marker
@@ -10908,23 +11074,32 @@ contains
         ! if no line should be plotted
         logical, optional :: noline
 
-        ! x axis definitial
+        ! x axis definition
         real*8, optional :: xlim(2)
 
         ! x axis tick definitions
         real*8, optional :: xticks
 
-        ! y axis definitial
+        ! x axis range for ticks
+        real*8, optional :: xtrange(2)
+
+        ! y axis definition
         real*8, optional :: ylim(2)
 
         ! y axis tick definitions
         real*8, optional :: yticks
 
-           ! z axis definitial
+        ! y axis range for ticks
+        real*8, optional :: ytrange(2)
+
+           ! z axis definition
         real*8, optional :: zlim(2)
 
         ! z axis tick definitions
         real*8, optional :: zticks
+
+        ! x axis range for ticks
+        real*8, optional :: ztrange(2)
 
         ! point where the z axis is placed
         real*8, optional :: zlevel
@@ -10953,6 +11128,12 @@ contains
         ! output file name
         character(LEN=*), optional :: title
 
+        ! print no grid
+        logical, optional :: nogrid
+        
+        ! should plot windows be shown or not
+        logical, optional :: nodisplay
+
         ! output file name
         character(LEN=*), optional :: filename
 
@@ -10965,11 +11146,11 @@ contains
 
         !##### OTHER VARIABLES ####################################################
  
-        logical :: lines, points
+        logical :: lines, points, nw_copy
         character(LEN = 2000) :: definition 
         integer :: i1, i2, n1, n2
         character(LEN=3) :: ft
-        character(LEN=150) :: cfile, dfile
+        character(LEN=150) :: cfile, dfile, pfile
      
      
         !##### ROUTINE CODE #######################################################
@@ -10990,6 +11171,16 @@ contains
             points = .false.
         endif
         if(present(marker))points = .true.
+
+        ! check for whether to display graph
+        nw_copy = .false.
+        if(present(nodisplay))then
+            if(nodisplay)nw_copy = .true.
+        endif
+        
+        if(access('/usr/local/include/toolbox_visual.txt', ' ') == 0)then
+            nw_copy = .true.
+        endif
 
         ! set up definitions
         definition = 'with'
@@ -11021,6 +11212,10 @@ contains
                     write(definition, '(a,f8.2)')trim(definition)//' lw ', 1d0
                 endif
             endif
+
+            if(present(dashtype)) then
+                write(definition, '(a,f8.2)')trim(gdefinition)//' dashtype "'//adjustl(trim(dashtype))//'"'
+            endif
         endif
 
         ! get marker definition
@@ -11042,13 +11237,33 @@ contains
         ! set the legend
         definition = trim(definition)//' notitle '
 
-        ! now directly create output
+        ! NOW DIRECTLY CREATE PLOT
+
+        ! create output files
         if(present(output))then
-            cfile = output//'_c.dat'
-            dfile = output//'_d.dat'
+            cfile = trim(output)//'_c.dat'
+            dfile = trim(output)//'_d.dat'
         else
-            cfile = 'command135454313d.dat'
-            dfile = 'plotdata135454313d.dat'
+            ! increment gnu_plotnumber by 1 (restart counting after 999 plots)
+            gnu_plotnumber = gnu_plotnumber + 1
+            if(gnu_plotnumber >= 1000) gnu_plotnumber = 1
+
+            if(gnu_plotnumber < 10)then
+                write(plotnumber,'(i1)')gnu_plotnumber
+            elseif(gnu_plotnumber < 100)then
+                write(plotnumber,'(i2)')gnu_plotnumber
+            else
+                write(plotnumber,'(i3)')gnu_plotnumber
+            endif
+            cfile = 'gnufigure_'//trim(plotnumber)//'_c.dat'
+            dfile = 'gnufigure_'//trim(plotnumber)//'_d.dat'
+        endif
+
+        ! create plot file name
+        if(present(filename))then
+            pfile = trim(filename)
+        else
+            pfile = 'gnufigure_'//trim(plotnumber)
         endif
 
         ! write the output data file
@@ -11064,29 +11279,67 @@ contains
         ! write the command file
         open(213659,file=trim(cfile))
 
-        ! set terminal and grid
-        write(213659, '(a)')'if (strstrt(GPVAL_TERMINALS, "wxt") > 0) {'
-        write(213659, '(a)')'    set terminal wxt title "Gnuplot"'
-        write(213659, '(a)')'} else {'
-        write(213659, '(a)')'    if (strstrt(GPVAL_TERMINALS, "x11") > 0) {'
-        write(213659, '(a)')'        set terminal x11'
-        write(213659, '(a)')'    } else {'
-        write(213659, '(a)')'        if (strstrt(GPVAL_TERMINALS, "qt") > 0) {'
-        write(213659, '(a)')'            set terminal qt'
-        write(213659, '(a)')'        } else {'
-        write(213659, '(a)')'            print ""'
-        write(213659, '(a)')'            print "ATTENTION: There seems to be NO VALID TERMINAL installed in "'
-        write(213659, '(a)')'            print "           your version of gnuplot. It might be a good idea to "'
-        write(213659, '(a)')'            print "           completely uninstall your Fortran/gnuplot/geany installation"'
-        write(213659, '(a)')'            print "           using the uninstallation files on www.ce-fortran.com. "'
-        write(213659, '(a)')'            print "           Afterwards you should reinstall the Fortran system again."'
-        write(213659, '(a)')'            print "           If this does not help, please refer to the forum."'
-        write(213659, '(a)')'            print ""'
-        write(213659, '(a)')'            q'
-        write(213659, '(a)')'        }'
-        write(213659, '(a)')'    }'
-        write(213659, '(a)')'}'
-        write(213659, '(a)')'set grid'
+        ! set file or terminal
+        if(nw_copy)then
+        
+            ! write graph to file            
+            ft = "pdf"
+            term = "pdfcairo"
+            if(present(filetype))then
+                if(filetype(1:3) == "png")then
+                    ft=  "png"
+                    term = "pngcairo"
+                endif
+                if(filetype(1:3) == "eps")then
+                    ft = "eps"
+                    term = "epscairo"
+                endif
+            endif
+            
+            if(present(ratio) .and. ft /= "png")then
+                write(term, '(a,f4.2)')trim(term)//" size 5,", 5d0*ratio
+            endif
+            
+            write(213659, *)
+            write(213659, '(a)')'set terminal '//trim(term)//'  color enhanced fontscale 0.7'
+            write(213659, '(a)')'set output "'//trim(pfile)//'.'//ft//'"'
+        else
+        
+            ! print graph to terminal
+
+            write(213659, '(a)')'if (strstrt(GPVAL_TERMINALS, "wxt") > 0) {'
+            write(213659, '(a)')'    set terminal wxt title "Gnuplot" enhanced'
+            write(213659, '(a)')'} else {'
+            write(213659, '(a)')'    if (strstrt(GPVAL_TERMINALS, "x11") > 0) {'
+            write(213659, '(a)')'        set terminal x11 enhanced'
+            write(213659, '(a)')'    } else {'
+            write(213659, '(a)')'        if (strstrt(GPVAL_TERMINALS, "qt") > 0) {'
+            write(213659, '(a)')'            set terminal qt enhanced'
+            write(213659, '(a)')'        } else {'
+            write(213659, '(a)')'            print ""'
+            write(213659, '(a)')'            print "ATTENTION: There seems to be NO VALID TERMINAL installed in "'
+            write(213659, '(a)')'            print "           your version of gnuplot. It might be a good idea to "'
+            write(213659, '(a)')'            print "           completely uninstall your Fortran/gnuplot/geany installation"'
+            write(213659, '(a)')'            print "           using the uninstallation files on www.ce-fortran.com. "'
+            write(213659, '(a)')'            print "           Afterwards you should reinstall the Fortran system again."'
+            write(213659, '(a)')'            print "           If this does not help, please refer to the forum."'
+            write(213659, '(a)')'            print ""'
+            write(213659, '(a)')'            q'
+            write(213659, '(a)')'        }'
+            write(213659, '(a)')'    }'
+            write(213659, '(a)')'}'
+        endif
+        
+        ! set the grid definition
+        if(present(nogrid))then
+            if(nogrid)then
+                write(213659, '(a)')'unset grid'
+            else
+                write(213659, '(a)')'set grid'
+            endif
+        else
+            write(213659, '(a)')'set grid'
+        endif
         
         if(present(zlevel)) then
             write(213659, '(a,e13.5)')'set ticslevel ', -min(max(zlevel, 0d0), 1d0)
@@ -11125,17 +11378,35 @@ contains
           
         ! set x axis
         if(present(xlim))write(213659, '(a,e13.5,a,e13.5,a)')'set xrange [',minval(xlim),':',maxval(xlim),']'
-        if(present(xticks))write(213659, '(a,e13.5)')'set xtics ',xticks        
+        if(present(xticks))then
+            if(present(xtrange))then
+                write(213659, '(a,e13.5,a,e13.5,a,e13.5)')'set xtics ',xtrange(1),',', xticks,',', xtrange(2)
+            else
+                write(213659, '(a,e13.5)')'set xtics ',xticks
+            endif
+        endif
         if(present(xlabel))write(213659, '(a)')'set xlabel "'//xlabel//'"font ",12"'
         
         ! set y axis
         if(present(ylim))write(213659, '(a,e13.5,a,e13.5,a)')'set yrange [',minval(ylim),':',maxval(ylim),']'
-        if(present(yticks))write(213659, '(a,e13.5)')'set ytics ',yticks        
+        if(present(yticks))then
+            if(present(ytrange))then
+                write(213659, '(a,e13.5,a,e13.5,a,e13.5)')'set ytics ',ytrange(1),',', yticks,',', ytrange(2)
+            else
+                write(213659, '(a,e13.5)')'set ytics ',yticks
+            endif
+        endif
         if(present(ylabel))write(213659, '(a)')'set ylabel "'//ylabel//'"font ",12"'
 
         ! set z axis
         if(present(zlim))write(213659, '(a,e13.5,a,e13.5,a)')'set zrange [',minval(zlim),':',maxval(zlim),']'
-        if(present(zticks))write(213659, '(a,e13.5)')'set ztics ',zticks        
+        if(present(zticks))then
+            if(present(ztrange))then
+                write(213659, '(a,e13.5,a,e13.5,a,e13.5)')'set ztics ',ztrange(1),',', zticks,',', ztrange(2)
+            else
+                write(213659, '(a,e13.5)')'set ztics ',zticks
+            endif
+        endif       
         if(present(zlabel))write(213659, '(a)')'set zlabel "'//zlabel//'"font ",12"'
 
         ! set title
@@ -11147,18 +11418,33 @@ contains
         ! write plot lines for 3D-data
         write(213659, '(a)')'splot "'//trim(dfile)//'" using 1:2:3 '//trim(definition)
                         
-        write(213659, '(a)')'pause mouse close'
+        if(.not. nw_copy)write(213659, '(a)')'pause mouse close'
 
         ! write graph to file
-        if(present(filename))then
-            ft = "eps"
-            if(present(filetype))then
-                if(filetype(1:3) == "png")ft= "png"
+        if(.not. nw_copy)then
+            if(present(filename))then                
+                ft = "pdf"
+                term = "pdfcairo"
+                if(present(filetype))then
+                    if(filetype(1:3) == "png")then
+                        ft=  "png"
+                        term = "pngcairo"
+                    endif
+                    if(filetype(1:3) == "eps")then
+                        ft = "eps"
+                        term = "epscairo"
+                    endif
+                endif
+                
+                if(present(ratio) .and. ft /= "png")then
+                    write(term, '(a,f4.2)')trim(term)//" size 5,", 5d0*ratio
+                endif
+                
+                write(213659, *)
+                write(213659, '(a)')'set terminal '//trim(term)//'  color enhanced fontscale 0.7'
+                write(213659, '(a)')'set output "'//trim(pfile)//'.'//ft//'"'
+                write(213659, '(a)')'replot'
             endif
-            write(213659, *)
-            write(213659, '(a)')'set terminal '//ft
-            write(213659, '(a)')'set output "'//filename//'.'//ft//'"'
-            write(213659, '(a)')'replot'
         endif
         
         write(213659, '(a)')'q'
@@ -11183,9 +11469,9 @@ contains
     ! Credits to Patrick Wiesmann for providing a first version of a 3d plotting 
     !     subroutine during his research assistantship.
     !##############################################################################
-    subroutine plot3d_line(xin, yin, zin, color, linewidth, marker, markersize, noline, &
-                xlim, xticks, xlabel, ylim, yticks, ylabel, zlim, zticks, zlevel, zlabel, & 
-                view, title, filename, filetype, output)
+    subroutine plot3d_line(xin, yin, zin, color, linewidth, dashtype, marker, markersize, noline, &
+                xlim, xticks, xtrange, xlabel, ylim, yticks, ylabel, ytrange, zlim, zticks, ztrange, zlevel, zlabel, & 
+                view, title, nogrid, nodisplay, filename, filetype, output)
 
         implicit none
 
@@ -11201,6 +11487,9 @@ contains
         ! width of the plotting line
         real*8, optional :: linewidth
 
+        ! dashtype of the plotting line
+        character(LEN=*), optional :: dashtype
+
         ! marker definition
         integer, optional :: marker
 
@@ -11210,23 +11499,32 @@ contains
         ! if no line should be plotted
         logical, optional :: noline
 
-        ! x axis definitial
+        ! x axis definition
         real*8, optional :: xlim(2)
 
         ! x axis tick definitions
         real*8, optional :: xticks
 
-        ! y axis definitial
+        ! x axis range for ticks
+        real*8, optional :: xtrange(2)
+
+        ! y axis definition
         real*8, optional :: ylim(2)
 
         ! y axis tick definitions
         real*8, optional :: yticks
 
-           ! z axis definitial
+        ! y axis range for ticks
+        real*8, optional :: ytrange(2)
+
+           ! z axis definition
         real*8, optional :: zlim(2)
 
         ! z axis tick definitions
         real*8, optional :: zticks
+
+        ! x axis range for ticks
+        real*8, optional :: ztrange(2)
 
         ! point where the z axis is placed
         real*8, optional :: zlevel
@@ -11246,6 +11544,12 @@ contains
         ! output file name
         character(LEN=*), optional :: title
 
+        ! print no grid
+        logical, optional :: nogrid
+        
+        ! should plot windows be shown or not
+        logical, optional :: nodisplay
+
         ! output file name
         character(LEN=*), optional :: filename
 
@@ -11258,11 +11562,11 @@ contains
 
         !##### OTHER VARIABLES ####################################################
  
-        logical :: lines, points
+        logical :: lines, points, nw_copy
         character(LEN = 2000) :: definition 
         integer :: i1, n
         character(LEN=3) :: ft
-        character(LEN=150) :: cfile, dfile
+        character(LEN=150) :: cfile, dfile, pfile
      
      
         !##### ROUTINE CODE #######################################################
@@ -11282,6 +11586,16 @@ contains
             points = .false.
         endif
         if(present(marker))points = .true.
+
+        ! check for whether to display graph
+        nw_copy = .false.
+        if(present(nodisplay))then
+            if(nodisplay)nw_copy = .true.
+        endif
+        
+        if(access('/usr/local/include/toolbox_visual.txt', ' ') == 0)then
+            nw_copy = .true.
+        endif
 
         ! set up definitions
         definition = 'with'
@@ -11309,6 +11623,10 @@ contains
             else
                 write(definition, '(a,f8.2)')trim(definition)//' lw ', 1d0
             endif
+
+            if(present(dashtype)) then
+                write(definition, '(a,f8.2)')trim(gdefinition)//' dashtype "'//adjustl(trim(dashtype))//'"'
+            endif
         endif
 
         ! get marker definition
@@ -11330,13 +11648,33 @@ contains
         ! set the legend
         definition = trim(definition)//' notitle '
 
-        ! now directly create output
+        ! NOW DIRECTLY CREATE PLOT
+
+        ! create output files
         if(present(output))then
-            cfile = output//'_c.dat'
-            dfile = output//'_d.dat'
+            cfile = trim(output)//'_c.dat'
+            dfile = trim(output)//'_d.dat'
         else
-            cfile = 'command135454313d.dat'
-            dfile = 'plotdata135454313d.dat'
+            ! increment gnu_plotnumber by 1 (restart counting after 999 plots)
+            gnu_plotnumber = gnu_plotnumber + 1
+            if(gnu_plotnumber >= 1000) gnu_plotnumber = 1
+
+            if(gnu_plotnumber < 10)then
+                write(plotnumber,'(i1)')gnu_plotnumber
+            elseif(gnu_plotnumber < 100)then
+                write(plotnumber,'(i2)')gnu_plotnumber
+            else
+                write(plotnumber,'(i3)')gnu_plotnumber
+            endif
+            cfile = 'gnufigure_'//trim(plotnumber)//'_c.dat'
+            dfile = 'gnufigure_'//trim(plotnumber)//'_d.dat'
+        endif
+
+        ! create plot file name
+        if(present(filename))then
+            pfile = trim(filename)
+        else
+            pfile = 'gnufigure_'//trim(plotnumber)
         endif
 
         ! write the output data file
@@ -11349,29 +11687,67 @@ contains
         ! write the command file
         open(213659,file=trim(cfile))
 
-        ! set terminal and grid
-        write(213659, '(a)')'if (strstrt(GPVAL_TERMINALS, "wxt") > 0) {'
-        write(213659, '(a)')'    set terminal wxt title "Gnuplot"'
-        write(213659, '(a)')'} else {'
-        write(213659, '(a)')'    if (strstrt(GPVAL_TERMINALS, "x11") > 0) {'
-        write(213659, '(a)')'        set terminal x11'
-        write(213659, '(a)')'    } else {'
-        write(213659, '(a)')'        if (strstrt(GPVAL_TERMINALS, "qt") > 0) {'
-        write(213659, '(a)')'            set terminal qt'
-        write(213659, '(a)')'        } else {'
-        write(213659, '(a)')'            print ""'
-        write(213659, '(a)')'            print "ATTENTION: There seems to be NO VALID TERMINAL installed in "'
-        write(213659, '(a)')'            print "           your version of gnuplot. It might be a good idea to "'
-        write(213659, '(a)')'            print "           completely uninstall your Fortran/gnuplot/geany installation"'
-        write(213659, '(a)')'            print "           using the uninstallation files on www.ce-fortran.com. "'
-        write(213659, '(a)')'            print "           Afterwards you should reinstall the Fortran system again."'
-        write(213659, '(a)')'            print "           If this does not help, please refer to the forum."'
-        write(213659, '(a)')'            print ""'
-        write(213659, '(a)')'            q'
-        write(213659, '(a)')'        }'
-        write(213659, '(a)')'    }'
-        write(213659, '(a)')'}'
-        write(213659, '(a)')'set grid'
+        ! set file or terminal
+        if(nw_copy)then
+        
+            ! write graph to file            
+            ft = "pdf"
+            term = "pdfcairo"
+            if(present(filetype))then
+                if(filetype(1:3) == "png")then
+                    ft=  "png"
+                    term = "pngcairo"
+                endif
+                if(filetype(1:3) == "eps")then
+                    ft = "eps"
+                    term = "epscairo"
+                endif
+            endif
+            
+            if(present(ratio) .and. ft /= "png")then
+                write(term, '(a,f4.2)')trim(term)//" size 5,", 5d0*ratio
+            endif
+            
+            write(213659, *)
+            write(213659, '(a)')'set terminal '//trim(term)//'  color enhanced fontscale 0.7'
+            write(213659, '(a)')'set output "'//trim(pfile)//'.'//ft//'"'
+        else
+        
+            ! print graph to terminal
+
+            write(213659, '(a)')'if (strstrt(GPVAL_TERMINALS, "wxt") > 0) {'
+            write(213659, '(a)')'    set terminal wxt title "Gnuplot" enhanced'
+            write(213659, '(a)')'} else {'
+            write(213659, '(a)')'    if (strstrt(GPVAL_TERMINALS, "x11") > 0) {'
+            write(213659, '(a)')'        set terminal x11 enhanced'
+            write(213659, '(a)')'    } else {'
+            write(213659, '(a)')'        if (strstrt(GPVAL_TERMINALS, "qt") > 0) {'
+            write(213659, '(a)')'            set terminal qt enhanced'
+            write(213659, '(a)')'        } else {'
+            write(213659, '(a)')'            print ""'
+            write(213659, '(a)')'            print "ATTENTION: There seems to be NO VALID TERMINAL installed in "'
+            write(213659, '(a)')'            print "           your version of gnuplot. It might be a good idea to "'
+            write(213659, '(a)')'            print "           completely uninstall your Fortran/gnuplot/geany installation"'
+            write(213659, '(a)')'            print "           using the uninstallation files on www.ce-fortran.com. "'
+            write(213659, '(a)')'            print "           Afterwards you should reinstall the Fortran system again."'
+            write(213659, '(a)')'            print "           If this does not help, please refer to the forum."'
+            write(213659, '(a)')'            print ""'
+            write(213659, '(a)')'            q'
+            write(213659, '(a)')'        }'
+            write(213659, '(a)')'    }'
+            write(213659, '(a)')'}'
+        endif
+        
+        ! set the grid definition
+        if(present(nogrid))then
+            if(nogrid)then
+                write(213659, '(a)')'unset grid'
+            else
+                write(213659, '(a)')'set grid'
+            endif
+        else
+            write(213659, '(a)')'set grid'
+        endif
         
         if(present(zlevel)) then
             write(213659, '(a,e13.5)')'set ticslevel ', -min(max(zlevel, 0d0), 1d0)
@@ -11386,17 +11762,35 @@ contains
           
         ! set x axis
         if(present(xlim))write(213659, '(a,e13.5,a,e13.5,a)')'set xrange [',minval(xlim),':',maxval(xlim),']'
-        if(present(xticks))write(213659, '(a,e13.5)')'set xtics ',xticks        
+        if(present(xticks))then
+            if(present(xtrange))then
+                write(213659, '(a,e13.5,a,e13.5,a,e13.5)')'set xtics ',xtrange(1),',', xticks,',', xtrange(2)
+            else
+                write(213659, '(a,e13.5)')'set xtics ',xticks
+            endif
+        endif
         if(present(xlabel))write(213659, '(a)')'set xlabel "'//xlabel//'"font ",12"'
         
         ! set y axis
         if(present(ylim))write(213659, '(a,e13.5,a,e13.5,a)')'set yrange [',minval(ylim),':',maxval(ylim),']'
-        if(present(yticks))write(213659, '(a,e13.5)')'set ytics ',yticks        
+        if(present(yticks))then
+            if(present(ytrange))then
+                write(213659, '(a,e13.5,a,e13.5,a,e13.5)')'set ytics ',ytrange(1),',', yticks,',', ytrange(2)
+            else
+                write(213659, '(a,e13.5)')'set ytics ',yticks
+            endif
+        endif
         if(present(ylabel))write(213659, '(a)')'set ylabel "'//ylabel//'"font ",12"'
 
         ! set z axis
         if(present(zlim))write(213659, '(a,e13.5,a,e13.5,a)')'set zrange [',minval(zlim),':',maxval(zlim),']'
-        if(present(zticks))write(213659, '(a,e13.5)')'set ztics ',zticks        
+        if(present(zticks))then
+            if(present(ztrange))then
+                write(213659, '(a,e13.5,a,e13.5,a,e13.5)')'set ztics ',ztrange(1),',', zticks,',', ztrange(2)
+            else
+                write(213659, '(a,e13.5)')'set ztics ',zticks
+            endif
+        endif       
         if(present(zlabel))write(213659, '(a)')'set zlabel "'//zlabel//'"font ",12"'
 
         ! set title
@@ -11408,18 +11802,33 @@ contains
         ! write plot lines for 3D-data
         write(213659, '(a)')'splot "'//trim(dfile)//'" using 1:2:3 '//trim(definition)
                         
-        write(213659, '(a)')'pause mouse close'
+        if(.not. nw_copy)write(213659, '(a)')'pause mouse close'
 
         ! write graph to file
-        if(present(filename))then
-            ft = "eps"
-            if(present(filetype))then
-                if(filetype(1:3) == "png")ft= "png"
+        if(.not. nw_copy)then
+            if(present(filename))then                
+                ft = "pdf"
+                term = "pdfcairo"
+                if(present(filetype))then
+                    if(filetype(1:3) == "png")then
+                        ft=  "png"
+                        term = "pngcairo"
+                    endif
+                    if(filetype(1:3) == "eps")then
+                        ft = "eps"
+                        term = "epscairo"
+                    endif
+                endif
+                
+                if(present(ratio) .and. ft /= "png")then
+                    write(term, '(a,f4.2)')trim(term)//" size 5,", 5d0*ratio
+                endif
+                
+                write(213659, *)
+                write(213659, '(a)')'set terminal '//trim(term)//'  color enhanced fontscale 0.7'
+                write(213659, '(a)')'set output "'//trim(pfile)//'.'//ft//'"'
+                write(213659, '(a)')'replot'
             endif
-            write(213659, *)
-            write(213659, '(a)')'set terminal '//ft
-            write(213659, '(a)')'set output "'//filename//'.'//ft//'"'
-            write(213659, '(a)')'replot'
         endif
         
         write(213659, '(a)')'q'
