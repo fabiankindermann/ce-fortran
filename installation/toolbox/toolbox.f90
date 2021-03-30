@@ -10371,6 +10371,8 @@ contains
             write(213659, *)
             write(213659, '(a)')'set terminal '//trim(term)//'  color enhanced fontscale 0.7'
             write(213659, '(a)')'set output "'//trim(pfile)//'.'//ft//'"'
+
+            write(*,'(/a/)')'CREATING PLOT '//trim(pfile)//'.'//ft
         else
         
             ! print graph to terminal
@@ -11382,6 +11384,8 @@ contains
             write(213659, *)
             write(213659, '(a)')'set terminal '//trim(term)//'  color enhanced fontscale 0.7'
             write(213659, '(a)')'set output "'//trim(pfile)//'.'//ft//'"'
+
+            write(*,'(/a/)')'CREATING PLOT '//trim(pfile)//'.'//ft
         else
         
             ! print graph to terminal
@@ -11793,6 +11797,8 @@ contains
             write(213659, *)
             write(213659, '(a)')'set terminal '//trim(term)//'  color enhanced fontscale 0.7'
             write(213659, '(a)')'set output "'//trim(pfile)//'.'//ft//'"'
+
+            write(*,'(/a/)')'CREATING PLOT '//trim(pfile)//'.'//ft
         else
         
             ! print graph to terminal

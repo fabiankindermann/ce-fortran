@@ -31,4 +31,7 @@ RUN chmod a+rx install_fortran.sh \
     && DEBIAN_FRONTEND="noninteractive" TZ="Europe/Berlin" ./install_fortran.sh \
     && rm -r install_fortran.sh && rm -rf /var/lib/apt/lists/*
 
+# SET ENVIRONMENT VARIABLE FOR COMPILATIONS
+ENV FCOMPILE="-O3 -fopenmp -frecursive -ffree-line-length-none -Wno-unused -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -I/usr/local/include/ /usr/local/include/toolbox.o"
+
 
