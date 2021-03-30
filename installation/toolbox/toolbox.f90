@@ -11046,7 +11046,7 @@ contains
     !##############################################################################
     subroutine plot3d_grid(xin, yin, zin, color, linewidth, dashtype, marker, markersize, noline, &
                 xlim, xticks, xtrange, xlabel, ylim, yticks, ylabel, ytrange, zlim, zticks, ztrange, zlevel, zlabel, & 
-                surf, surf_color, transparent, view, title, nogrid, nodisplay, filename, filetype, output)
+                surf, surf_color, transparent, view, title, ratio, nogrid, nodisplay, filename, filetype, output)
 
         implicit none
 
@@ -11128,6 +11128,9 @@ contains
         ! output file name
         character(LEN=*), optional :: title
 
+        ! y-to-x axis ratio
+        real*8, optional :: ratio
+
         ! print no grid
         logical, optional :: nogrid
         
@@ -11149,8 +11152,8 @@ contains
         logical :: lines, points, nw_copy
         character(LEN = 2000) :: definition 
         integer :: i1, i2, n1, n2
-        character(LEN=3) :: ft
-        character(LEN=150) :: cfile, dfile, pfile
+        character(LEN=3) :: ft, plotnumber
+        character(LEN=150) :: cfile, dfile, pfile, term
      
      
         !##### ROUTINE CODE #######################################################
@@ -11214,7 +11217,7 @@ contains
             endif
 
             if(present(dashtype)) then
-                write(definition, '(a,f8.2)')trim(gdefinition)//' dashtype "'//adjustl(trim(dashtype))//'"'
+                write(definition, '(a,f8.2)')trim(definition)//' dashtype "'//adjustl(trim(dashtype))//'"'
             endif
         endif
 
@@ -11471,7 +11474,7 @@ contains
     !##############################################################################
     subroutine plot3d_line(xin, yin, zin, color, linewidth, dashtype, marker, markersize, noline, &
                 xlim, xticks, xtrange, xlabel, ylim, yticks, ylabel, ytrange, zlim, zticks, ztrange, zlevel, zlabel, & 
-                view, title, nogrid, nodisplay, filename, filetype, output)
+                view, title, ratio, nogrid, nodisplay, filename, filetype, output)
 
         implicit none
 
@@ -11544,6 +11547,9 @@ contains
         ! output file name
         character(LEN=*), optional :: title
 
+        ! y-to-x axis ratio
+        real*8, optional :: ratio
+
         ! print no grid
         logical, optional :: nogrid
         
@@ -11565,8 +11571,8 @@ contains
         logical :: lines, points, nw_copy
         character(LEN = 2000) :: definition 
         integer :: i1, n
-        character(LEN=3) :: ft
-        character(LEN=150) :: cfile, dfile, pfile
+        character(LEN=3) :: ft, plotnumber
+        character(LEN=150) :: cfile, dfile, pfile, term
      
      
         !##### ROUTINE CODE #######################################################
@@ -11625,7 +11631,7 @@ contains
             endif
 
             if(present(dashtype)) then
-                write(definition, '(a,f8.2)')trim(gdefinition)//' dashtype "'//adjustl(trim(dashtype))//'"'
+                write(definition, '(a,f8.2)')trim(definition)//' dashtype "'//adjustl(trim(dashtype))//'"'
             endif
         endif
 
