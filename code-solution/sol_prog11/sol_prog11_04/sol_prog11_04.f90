@@ -160,7 +160,7 @@ contains
                     abs(DIFF(itmax)/YY(itmax))*100d0 < sig*100d0
 
                 write(*,'(i4,3f12.5)')iter, lsra_comp/lsra_all*100d0, &
-                    (Lstar-1d0)*100d0,DIFF(itmax)/YY(itmax)*100d0
+                    (Vstar-1d0)*100d0,DIFF(itmax)/YY(itmax)*100d0
             endif
 
             ! check for convergence
@@ -763,7 +763,7 @@ contains
         enddo
 
         ! calculate the constant utility gain/loss for future generations
-        Lstar = (PV_t-PV_trans-SV(1))/PV_0
+        Vstar = (PV_t-PV_trans-SV(1))/PV_0
 
         ! calculate compensation payments for future cohorts
         do it = TT, 1, -1
@@ -772,7 +772,7 @@ contains
             EVV_t = damp*VV_coh(1, it)
 
             ! get target utility
-            EVV_0 = damp*VV_coh(1, 0)*Lstar
+            EVV_0 = damp*VV_coh(1, 0)*Vstar
 
             ! get derivative of expected utility function
             dEVV_da = 0d0
@@ -949,7 +949,7 @@ contains
                 HEV(it), DIFF(it)/YY(it)*100d0
         enddo
 
-        if(lsra_on)write(22, '(/a,f12.6)')'EFFICIENCY GAIN: ', (Lstar-1d0)*100d0
+        if(lsra_on)write(22, '(/a,f12.6)')'EFFICIENCY GAIN: ', (Vstar-1d0)*100d0
 
     end subroutine
 
