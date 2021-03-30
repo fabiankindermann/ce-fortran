@@ -128,7 +128,7 @@ public :: grid_Cons_Grow, grid_Val_Grow, grid_Inv_Grow
 
 ! interpolation
 public :: poly_interpol
-public :: linint_Equi, linint_Cheb, linint_Grow, linint_Gen
+public :: linint_Equi, linint_Cheb, linint_Grow, linint_Gen, linint_Gen_detail
 public :: spline_interp, spline_eval, spline
 
 ! plotting
@@ -1882,6 +1882,82 @@ contains
         linint_Gen = phi*yi(ial) + (1d0-phi)*yi(iar)
 
     end function
+
+
+    !##############################################################################
+    ! subroutine linint_Gen_detail
+    !
+    ! For linear interpolation on irregular grids (with detailed return values).
+    !##############################################################################
+    subroutine linint_Gen_detail(x, xi, ial, iar, phi, istart_in)
+
+        !##### INPUT/OUTPUT VARIABLES #############################################
+
+        ! point where to evaluate
+        real*8, intent(in) :: x
+
+        ! grid on which to evaluate
+        real*8, intent(in) :: xi(0:)
+
+        ! left interpolation point
+        integer, intent(out) :: ial
+
+        ! right interpolation point
+        integer, intent(out) :: iar
+
+        ! interpolation fraction
+        real*8, intent(out) :: phi
+
+        ! (optional) point where to start
+        integer, intent(in), optional :: istart_in
+
+
+        !##### OTHER VARIABLES ####################################################
+
+        ! other variables
+        integer :: istart, n
+
+
+        !##### ROUTINE CODE #######################################################
+
+
+        n = size(xi,1)-1
+
+        if(present(istart_in))then
+            istart = min(max(istart_in, 0), n)
+        else
+            istart = n/2
+        endif
+        
+        ! if grid value too large, search for first smaller point
+        if(xi(istart) > x)then
+            ial = istart
+            do 
+                ial = ial - 1
+                if(ial <= 0)exit
+                if(xi(ial) <= x)exit
+            enddo
+            ial = max(ial, 0)
+            ial = min(ial, n-1)            
+            iar = ial+1
+
+        ! if grid value too small, search for first larger point
+        else
+            iar = istart
+            do 
+                iar = iar + 1
+                if(iar >= n)exit
+                if(xi(iar) >= x)exit
+            enddo
+            iar = max(iar, 1)
+            iar = min(iar, n)            
+            ial = iar-1
+        endif
+
+        ! linearly interpolate between the two points
+        phi = 1d0 - (x-xi(ial))/(xi(iar)-xi(ial))            
+
+    end subroutine
 
 
 
