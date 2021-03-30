@@ -7,8 +7,6 @@
 ! Authors: Hans Fehr and Fabian Kindermann
 !          contact@ce-fortran.com
 !
-! #VC# VERSION: 1.0  (23 January 2018)
-!
 !##############################################################################
 module Globals
 

@@ -9,8 +9,6 @@
 ! Authors: Hans Fehr and Fabian Kindermann
 !          contact@ce-fortran.com
 !
-! #VC# VERSION: 1.0  (23 January 2018)
-!
 !##############################################################################
 include "prog10_05m.f90"
 
