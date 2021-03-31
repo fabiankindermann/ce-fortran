@@ -13,7 +13,7 @@ apt update
 apt upgrade
 apt --yes install build-essential
 apt --yes install dconf-editor dbus-x11
-apt --yes install gedit gnome-terminal
+apt --yes install gnome-terminal
 
 
 # INSTALL MS CORE FONTS

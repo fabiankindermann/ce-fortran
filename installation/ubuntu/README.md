@@ -9,7 +9,6 @@ The Ubuntu installation package provides three command files that serve differen
 All installation files have been tested with Ubuntu 20.04, but should work on previous and later versions.
 
 
-
 ## Installation
 
 When you execute the file `install_fortran.sh`, it will install the [GNU Fortran Compiler](https://gcc.gnu.org/fortran/) environment, the plotting programm [gnuplot](http://gnuplot.info/) as well as the IDE [geany](https://www.geany.org/) to your computer. In addition, it is going to compile and store the toolbox on your computer.
