@@ -1,4 +1,4 @@
-# Docker repository: [ce-fortran](https://hub.docker.com/r/fabiankindermann/ce-fortran)
+# Docker repository: <a href="https://hub.docker.com/r/fabiankindermann/ce-fortran" target="_blank">ce-fortran</a>
 
 This docker repository contains a basic version of the ce-fortran compiler toolkit. It is based on Ubuntu 20.04. In particular, it features the following packages:
 
