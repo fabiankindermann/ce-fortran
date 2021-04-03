@@ -14,13 +14,9 @@ as well as its exercise and solution manual. When downloading or cloning this re
 
 ## Wiki
 
-In our [wiki](https://github.com/fabiankindermann/ce-fortran/wiki), you can find a full documentation of the ce-fortran toolbox.
+In our [wiki](https://github.com/fabiankindermann/ce-fortran/wiki), you can find a full documentation of the ce-fortran toolbox as well as further links that you might find useful.
 
 ## Further Information
 
-For further information, please visit www.ce-fortran.com.
-
-There you will find:
-1. A forum for discussion about certain issues.
-2. A collection of links for further developing your programming skills.
+For further information, please visit www.ce-fortran.com. There, you will also find our discussion forum.
 
