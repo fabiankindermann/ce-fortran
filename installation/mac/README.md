@@ -8,7 +8,13 @@ The macOS installation package provides three command files that serve different
 
 All installation files have been tested with macOS Big Sur, but should work on previous versions.
 
+## Important security motice for macOS users ##
 
+Starting with macOS Catalina, Apple has removed terminal access to the "Documents" and the "Download" folder for security purposes. As a result, when you download an installation files from this respository (into Documents or Downloads) and try to execute the respective install_fortran.command file, it will not execute correctly. To solve this issue, please copy the installation files into another folder of yours, e.g. create a folder "Programming" in your home directory. If you install fortran from there, installation (and uninstallation) should run smoothly.
+
+The same is true when compiling, building and executing Fortran (.f90) files. You can't do this within your Documents or Download folder anymore. Please copy your source files to another folder, again e.g. create a folder "Programming" in your home directory.
+
+There are some fixes for this issue on the internet. Yet, they involve changing access privileges to your hard drive, which we can not recommend. If anyone still faces problems with this, please open a thread on the forum.
 
 ## Installation
 
