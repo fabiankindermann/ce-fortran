@@ -1,0 +1,3 @@
+# Batch files should have cp1252 encoding #
+###########################################
+*.bat encoding=cp1252
