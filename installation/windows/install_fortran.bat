@@ -154,8 +154,8 @@ move geany.conf "%userprofile%\AppData\Roaming\geany\geany.conf"
 
 :: INSTALL THE TOOLBOX
 
-gfortran -c -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../../toolbox/toolbox.f90 -o toolbox_debug.o
-gfortran -c -O3 -ffree-line-length-none ./../../toolbox/toolbox.f90 -o toolbox.o
+gfortran -c -Werror -fopenmp -Wno-unused  -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../../toolbox/toolbox.f90 -o toolbox_debug.o
+gfortran -c -O3 -fopenmp -ffree-line-length-none ./../../toolbox/toolbox.f90 -o toolbox.o
 mkdir "%location%\include\" 2>nul
 del /Q "%location%\include\toolbox.mod" 2>nul
 del /Q "%location%\include\toolbox.o" 2>nul

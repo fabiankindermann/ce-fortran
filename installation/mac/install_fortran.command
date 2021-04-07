@@ -72,8 +72,8 @@ sudo mv ./geany.conf ~/.config/geany/geany.conf
 ## INSTALL THE TOOLBOX
 
 # compile the toolbox
-gfortran -c -Werror -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../toolbox/toolbox.f90 -o toolbox_debug.o
-gfortran -c -O3 -ffree-line-length-none ./../toolbox/toolbox.f90 -o toolbox.o
+gfortran -c -Werror -fopenmp -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../toolbox/toolbox.f90 -o toolbox_debug.o
+gfortran -c -O3 -fopenmp -ffree-line-length-none ./../toolbox/toolbox.f90 -o toolbox.o
 
 # copy the toolbox to the working directory
 sudo mkdir -p /usr/local/include
