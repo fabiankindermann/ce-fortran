@@ -9,3 +9,7 @@
 *.obj
 *.exe
 build/
+
+# VSCode Configuration  #
+#########################
+.vscode
