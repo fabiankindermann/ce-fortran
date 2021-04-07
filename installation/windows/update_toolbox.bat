@@ -7,7 +7,7 @@
 ::
 :: Author: Fabian Kindermann (contact@ce-fortran.com)
 
-@ECHO off
+@ECHO off 
 chcp 1252
 
 
