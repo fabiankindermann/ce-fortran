@@ -124,7 +124,7 @@ contains
           (1d0-varphi)*EV(iar, ih_com, ip_com, ism_com, isf_com, il_com))**egam/egam
 
         ! get value function
-        valuefunc = -((cons_com/sqrt(2d0+dble(nchild(ij_com))))**egam/egam &
+        valuefunc = -((cons_lim/sqrt(2d0+dble(nchild(ij_com))))**egam/egam &
                     - nu*dble(il_com) + beta*psi(ij_com+1)*vplus)
 
         ! penalty for negative consumption
