@@ -125,13 +125,13 @@ geanyins.exe /S
 set locnew=%location:\=\\%
 ECHO [build-menu] >  "filetypes.fortran"
 ECHO FT_00_LB=_Compile >> "filetypes.fortran"
-ECHO FT_00_CM=gfortran -O3 -Wno-unused -frecursive -fno-automatic -ffree-line-length-none -fopenmp -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -I"%locnew%\\include" -c "%%f" -o "%%e.o" >> "filetypes.fortran"
+ECHO FT_00_CM=gfortran -O3 -Wno-unused -fno-automatic -ffree-line-length-none -fopenmp -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -I"%locnew%\\include" -c "%%f" -o "%%e.o" >> "filetypes.fortran"
 ECHO FT_00_WD= >> "filetypes.fortran"
 ECHO FT_01_LB=_Build >> "filetypes.fortran"
 ECHO FT_01_CM=gfortran -O3 -fopenmp "%locnew%\\include\\toolbox.o" "%%e.o" -o prog >> "filetypes.fortran"
 ECHO FT_01_WD= >> "filetypes.fortran"
 ECHO FT_02_LB=_Debug >> "filetypes.fortran"
-ECHO FT_02_CM=gfortran -Wno-unused -frecursive -fno-automatic -ffree-line-length-none -fopenmp -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -I"%locnew%\\include" -g "%%f" -o "%%e.o" "%locnew%\\include\\toolbox_debug.o" >> "filetypes.fortran"
+ECHO FT_02_CM=gfortran -Wno-unused -fno-automatic -ffree-line-length-none -fopenmp -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -I"%locnew%\\include" -g "%%f" -o "%%e.o" "%locnew%\\include\\toolbox_debug.o" >> "filetypes.fortran"
 ECHO FT_02_WD= >> "filetypes.fortran"
 ECHO EX_00_LB=_Run Program >> "filetypes.fortran"
 ECHO EX_00_CM="prog" >> "filetypes.fortran"
@@ -154,7 +154,7 @@ move geany.conf "%userprofile%\AppData\Roaming\geany\geany.conf"
 
 :: INSTALL THE TOOLBOX
 
-gfortran -c -Werror -fopenmp -Wno-unused  -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -fno-automatic -g ./../../toolbox/toolbox.f90 -o toolbox_debug.o
+gfortran -c -Werror -fopenmp -Wno-unused  -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./../../toolbox/toolbox.f90 -o toolbox_debug.o
 gfortran -c -O3 -fopenmp -ffree-line-length-none ./../../toolbox/toolbox.f90 -o toolbox.o
 mkdir "%location%\include\" 2>nul
 del /Q "%location%\include\toolbox.mod" 2>nul
