@@ -49,13 +49,13 @@ apt --yes install geany
 # Fortran compilation file
 echo '[build-menu]' >  "filetypes.fortran"
 echo 'FT_00_LB=_Compile' >> "filetypes.fortran"
-echo 'FT_00_CM=mkdir -p Build && gfortran -O3 -fopenmp -frecursive -fno-automatic -ffree-line-length-none -Wno-unused -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -I/usr/local/include/ -J"./Build" -c "%f" -o "Build/%e.o"' >> "filetypes.fortran"
+echo 'FT_00_CM=mkdir -p Build && gfortran -O3 -fopenmp -frecursive -ffree-line-length-none -Wno-unused -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -I/usr/local/include/ -J"./Build" -c "%f" -o "Build/%e.o"' >> "filetypes.fortran"
 echo 'FT_00_WD=' >> "filetypes.fortran"
 echo 'FT_01_LB=_Build' >> "filetypes.fortran"
 echo 'FT_01_CM=gfortran -O3 -fopenmp -J"./Build" /usr/local/include/toolbox.o "Build/%e.o" -o Build/prog' >> "filetypes.fortran"
 echo 'FT_01_WD=' >> "filetypes.fortran"
 echo 'FT_02_LB=_Debug' >> "filetypes.fortran"
-echo 'FT_02_CM=mkdir -p Build && gfortran -fopenmp -frecursive -fno-automatic -ffree-line-length-none -Wno-unused -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -I/usr/local/include/ -J"./Build" -g "%f" -o "Build/%e.o" "/usr/local/include/toolbox_debug.o"' >> "filetypes.fortran"
+echo 'FT_02_CM=mkdir -p Build && gfortran -fopenmp -frecursive -ffree-line-length-none -Wno-unused -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -I/usr/local/include/ -J"./Build" -g "%f" -o "Build/%e.o" "/usr/local/include/toolbox_debug.o"' >> "filetypes.fortran"
 echo 'FT_02_WD=' >> "filetypes.fortran"
 echo 'EX_00_LB=_Run Program' >> "filetypes.fortran"
 echo 'EX_00_CM=clear && "Build/prog"' >> "filetypes.fortran"
@@ -79,7 +79,7 @@ mv ./geany.conf /root/.config/geany/geany.conf
 ## INSTALL THE TOOLBOX
 
 # compile the toolbox
-gfortran -c -Werror -fopenmp -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -fno-automatic -g ./toolbox.f90 -o toolbox_debug.o
+gfortran -c -Werror -fopenmp -Wno-unused -ffree-line-length-none -fimplicit-none -Wall -fcheck=bound,do -ffpe-trap=invalid,zero,overflow -frecursive -g ./toolbox.f90 -o toolbox_debug.o
 gfortran -c -O3 -fopenmp -ffree-line-length-none ./toolbox.f90 -o toolbox.o
 
 # copy the toolbox to the working directory
