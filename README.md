@@ -1,10 +1,12 @@
 # The ce-fortran Code and Compiler Repository
 
-This program and compiler repository accompanies the textbook
+This program and compiler repository accompanies our textbook
 
-&nbsp;&nbsp;&nbsp;&nbsp;[Fehr and Kindermann (2018), Introduction to Computational Economics Using Fortran, Oxford University Press.](https://global.oup.com/academic/product/introduction-to-computational-economics-using-fortran-9780198804406?prevSortField=1&sortField=8&start=0&resultsPerPage=20&prevNumResPerPage=20&lang=en&cc=no)
+[Fehr and Kindermann (2018), Introduction to Computational Economics Using Fortran, Oxford University Press.](https://global.oup.com/academic/product/introduction-to-computational-economics-using-fortran-9780198804406?prevSortField=1&sortField=8&start=0&resultsPerPage=20&prevNumResPerPage=20&lang=en&cc=no)
 
-as well as its exercise and solution manual. When downloading or cloning this repository, you will be able to install a suitable Fortran compiler on your operating system and you will obtain all codes that come with the books.
+as well as its exercise and solution manual. Here you will find all the programs we describe in the book as well as detailed information on how to install free Fortran compilers. In addition we show you how to install our toolbox. This toolbox contains ample numerical routines as well as a plotting interface for GNUPlot.
+
+Just download or clone this repository and you will be able to install a suitable Fortran compiler on your operating system such that you can study all codes that come with the books.
 
 ## Structure of this respository
 
@@ -16,7 +18,6 @@ as well as its exercise and solution manual. When downloading or cloning this re
 
 In our [wiki](https://github.com/fabiankindermann/ce-fortran/wiki), you can find a full documentation of the ce-fortran toolbox as well as further links that you might find useful.
 
-## Further Information
+## I need help or support!
 
-For further information, please visit www.ce-fortran.com. There, you will also find our discussion forum.
-
+The best way to get help or support is to [start a discussion](https://github.com/fabiankindermann/ce-fortran/discussions). We are trying to be as quick as possible in providing responses to your questions.
