@@ -62,6 +62,9 @@ echo '[geany]' >  "geany.conf"
 echo 'indent_type=0' >>  "geany.conf"
 echo 'pref_main_load_session=false' >>  "geany.conf"
 echo 'beep_on_errors=false' >>  "geany.conf"
+echo ' ' >>  "geany.conf"
+echo '[tools]' >>  "geany.conf"
+echo 'shell_cmd=/bin/zsh' >>  "geany.conf"
 
 # update geany configuration
 mkdir -p ~/.config/geany/filedefs/
