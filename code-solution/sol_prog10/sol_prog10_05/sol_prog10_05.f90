@@ -516,8 +516,8 @@ contains
         call plot(dble(ages), a_coh(:, 2, 0), legend='High Skilled - Good Health')
         call plot(dble(ages), a_coh(:, 2, 1), legend='High Skilled - Bad Health')
         call plot(dble(ages), a_coh(:, 2, 2), legend='High Skilled - Average')
-        call plot(dble(ages), a_coh(:, 3, 0), legend='Bad Health')
-        call plot(dble(ages), a_coh(:, 3, 1), legend='Good Health')
+        call plot(dble(ages), a_coh(:, 3, 0), legend='Good Health')
+        call plot(dble(ages), a_coh(:, 3, 1), legend='Bad Health')
         call plot(dble(ages), a_coh(:, 3, 2), legend='Average')
         call execplot(xlabel='Age j', ylabel='Assets')
 
