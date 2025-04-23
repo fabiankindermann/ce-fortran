@@ -98,7 +98,7 @@ ECHO Components=core,docs,demo,license >> "gnusetup.log"
 ECHO Tasks=defaulttermwxt,associate,associate\plt,associate\gp,associate\gpl,modifypath >> "gnusetup.log"
 
 :: download the installer file
-wget -O gnuplotins.exe https://sourceforge.net/projects/gnuplot/files/gnuplot/5.4.1/gp541-win64-mingw.exe
+wget -O gnuplotins.exe https://sourceforge.net/projects/gnuplot/files/gnuplot/6.0.2/gp602-win64-mingw.exe
 
 :: give execution rights
 chmod +x gnuplotins.exe
@@ -110,7 +110,7 @@ gnuplotins.exe /SILENT /LOADINF="gnusetup.log"
 :: INSTALL GEANY
 
 :: download file
-wget -O geanyins.exe https://download.geany.org/geany-1.37.1_setup.exe
+wget -O geanyins.exe https://download.geany.org/geany-2.0_setup.exe
 
 :: give execution rights
 chmod +x geanyins.exe
