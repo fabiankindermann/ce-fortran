@@ -5020,7 +5020,7 @@ contains
      
         !##### OTHER VARIABLES ####################################################
      
-        real*8 :: mu_c, sigma_c, pim4, z=0d0, z1, p1, p2, p3, pp
+        real*8 :: mu_c, sigma_c, pim4, z, z1, p1, p2, p3, pp
         integer :: n, m, i, j, its
         integer, parameter :: maxit = 200
         real*8, parameter :: pi = 3.1415926535897932d0
@@ -5028,7 +5028,7 @@ contains
      
         !##### ROUTINE CODE #######################################################
      
-        ! initialize parameters
+        ! initialize parameters        
         mu_c = 0d0
         if(present(mu))mu_c = mu
         sigma_c = 1d0
@@ -5037,6 +5037,8 @@ contains
         if(sigma_c < 0d0)then
             call error('normal_discrete','sigma has negative value')
         endif
+        
+        z = 0d0
      
         ! check for right array sizes
         n = assert_eq(size(x,1), size(prob,1), 'normal_discrete')
@@ -5611,7 +5613,7 @@ contains
         real*8 :: tol
         real*8, parameter :: cgold = 0.3819660d0
         real*8, parameter :: zeps = 1.0e-3*epsilon(xmin)
-        real*8 :: a=0d0, b=0d0, d=0d0, e=0d0, etemp, fu, fv, fw, fx, p, q, r, tol1, tol2, &
+        real*8 :: a, b, d, e, etemp, fu, fv, fw, fx, p, q, r, tol1, tol2, &
             u, v, w, x, xm, ax, bx, cx
         integer :: iter
         
@@ -5632,6 +5634,12 @@ contains
         
         ! set tolerance level
         tol =  tbox_gftol
+        
+        ! define a, b, d, e to zero
+        a = 0d0
+        b = 0d0
+        d = 0d0
+        e = 0d0
         
         ! set ax, bx and cx
         ax = minimum
@@ -6124,7 +6132,7 @@ contains
             real*8, parameter :: cgold = 0.3819660d0
             real*8, parameter :: zeps=1.0e-3*epsilon(ax)
             integer :: iter
-            real*8 :: a=0d0, b=0d0, d=0d0, e=0d0, etemp=0d0
+            real*8 :: a, b, d, e, etemp
             real*8 :: fu, fv, fw, fx, p, q, r, tol1, tol2, &
                 u, v, w, x, xm
      
@@ -6142,7 +6150,15 @@ contains
      
      
             !##### ROUTINE CODE ###################################################
+
+            ! set a, b, d, e, etemp to zero
+            a = 0d0
+            b = 0d0
+            d = 0d0
+            e = 0d0
+            etemp = 0d0
      
+            ! start algorithm
             a = min(ax, cx)
             b = max(ax, cx)
             v = bx
@@ -7162,7 +7178,7 @@ contains
             real*8, parameter :: alf = 1.0e-4
             real*8, parameter :: tolx = epsilon(x)
             integer :: ndum
-            real*8 :: a, alam, alam2=0d0, alamin, b, disc, f2=0d0, pabs, rhs1, rhs2, &
+            real*8 :: a, alam, alam2, alamin, b, disc, f2, pabs, rhs1, rhs2, &
                 slope, tmplam
      
      
@@ -7179,6 +7195,11 @@ contains
      
      
             !##### ROUTINE CODE ###################################################
+            
+            ! set variables to zero
+            alam2 = 0d0
+            f2 = 0d0
+            
      
             ! assert sizes or arrays
             ndum = assert_eq(size(g), size(p), size(x), size(xold), 'lnsrch')
